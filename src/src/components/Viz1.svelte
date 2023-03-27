@@ -4,9 +4,13 @@
     import * as d3 from 'd3';
   
     let data = [
-        { game: "Game 1", gf: 2, xgf: 1.5, ga: 4, xga: 3 },
-        { game: "Game 2", gf: 4, xgf: 6.5, ga: 2, xga: 0.5},
-        { game: "Game 3", gf: 3, xgf: 0.5, ga: 1, xga: 2.5 },
+        { game: "vs Australia", gf: 4, xgf: 4, ga: 1, xga: 0.5 },
+        { game: "vs Denmark", gf: 2, xgf: 2.4, ga: 1, xga: 0.6},
+        { game: "vs Tunisia", gf: 0, xgf: 0.8, ga: 1, xga: 0.5 },
+        { game: "vs Poland", gf: 3, xgf: 1.4, ga: 1, xga: 1.7 },
+        { game: "vs England", gf: 2, xgf: 0.9, ga: 1, xga: 2.4 },
+        { game: "vs Morocoo", gf: 2, xgf: 2, ga: 0, xga: 0.9 },
+        { game: "vs Argentina", gf: 3, xgf: 2.2, ga: 3, xga: 3.2 },
     ];
 
     let svg;
@@ -17,8 +21,24 @@
     // Create the SVG element
     svg = d3.select('#chart')
       .append('svg')
-      .attr('width', 1200)
+      .attr('width', 1000)
       .attr('height', 600);
+
+    svg.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 1000)
+      .attr('height', 600)
+      .attr('stroke', 'black')
+      .attr('fill', '#C4F0FF')
+
+    svg.selectAll('text')
+      .data(data)
+      .enter()
+      .append('text')
+      .text((d, i) => d.game)
+      .attr('x', 800)
+      .attr('y', (d, i) =>  120 + i * 60)
 
     // Define the xgf pattern
     const xgfp = svg.append('defs')
@@ -63,7 +83,7 @@
       .append('rect')
       .attr('class', 'gf-bar')
       .attr('x', (d, i) => 500 - (d.gf*50))
-      .attr('y', (d, i) => 100 + i * 40)
+      .attr('y', (d, i) => 100 + i * 60)
       .attr('width', d => d.gf * 50)
       .attr('height', 30)
       .attr('stroke', 'black')
@@ -82,7 +102,7 @@
       .append('rect')
       .attr('class', 'xgf-bar')
       .attr('x', (d, i) => 500 - (d.xgf*50))
-      .attr('y', (d, i) => 100 + i * 40)
+      .attr('y', (d, i) => 100 + i * 60)
       .attr('width', d => d.xgf * 50)
       .attr('height', 30)
       .attr('fill', 'url(#xgfp)')
@@ -97,7 +117,7 @@
       .append('rect')
       .attr('class', 'ga-bar')
       .attr('x', (d, i) => 500)
-      .attr('y', (d, i) => 100 + i * 40)
+      .attr('y', (d, i) => 100 + i * 60)
       .attr('width', d => d.ga * 50)
       .attr('height', 30)
       .attr('stroke', 'black')
@@ -111,7 +131,7 @@
       .append('rect')
       .attr('class', 'xga-bar')
       .attr('x', (d, i) => 500)
-      .attr('y', (d, i) => 100 + i * 40)
+      .attr('y', (d, i) => 100 + i * 60)
       .attr('width', d => d.xga * 50)
       .attr('height', 30)
       .attr('fill', 'url(#xgap)')
