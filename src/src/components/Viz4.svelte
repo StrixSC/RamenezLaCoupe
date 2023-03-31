@@ -235,6 +235,7 @@
       .text(function (d) {
         return d;
       })
+      
 
     /////////////////////////////////////////////////////////
     ///////////// Draw the radar chart blobs ////////////////
@@ -242,7 +243,7 @@
 
     //The radial line function
     var radarLine = d3.lineRadial()
-      .curve(d3.curveLinearClosed)
+      .curve(d3.curveBasisClosed)
       .radius(function (d: any) {
         return rScale(d.value);
       })
@@ -355,14 +356,14 @@
       })
       .style("fill", "none")
       .style("pointer-events", "all")
-      .on("mouseover", function (d, i) {
+      .on("mouseover", function (d, i: any) {
         var newX = parseFloat(d3.select(this).attr("cx")) - 10;
         var newY = parseFloat(d3.select(this).attr("cy")) - 10;
 
         tooltip
           .attr("x", newX)
           .attr("y", newY)
-          .text(Format(d.value))
+          .text(Format(i.value))
           .transition()
           .duration(200)
           .style("opacity", 1);
@@ -377,8 +378,11 @@
 
 </script>
 
+<div>
+  <div class=""> </div>
+  <div class="radarChart"></div>
+</div>
 
-<div class="radarChart"></div>
 
 
 
