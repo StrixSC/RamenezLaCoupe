@@ -7,18 +7,13 @@
   //////////////////////// Set-Up ////////////////////////////// 
   ////////////////////////////////////////////////////////////// 
   onMount(async () => {
-    SetupRadarChart()
+    SetupRadarChart();
+    buildLegend();
   })
-
-  function SetupRadarChart() {
-  var margin = {top: 100, right: 100, bottom: 100, left: 100},
-    width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
-    height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
-
 
   var data = [
         [
-        {axis:"Shots",value:22},
+        {axis:"Shots",value:22, name: "Messi"},
         {axis:"SoT",value:28},
         {axis:"Passes",value:29},
         {axis:"Touches",value:17},
@@ -27,7 +22,7 @@
         {axis:"Interceptions",value:21},
         {axis:"Tackle",value:50}			
         ],[
-        {axis:"Shots",value:27},
+        {axis:"Shots",value:27,  name: "Mbappe"},
         {axis:"SoT",value:16},
         {axis:"Passes",value:35},
         {axis:"Touches",value:13},
@@ -36,7 +31,7 @@
         {axis:"Interceptions",value:35},
         {axis:"Tackle",value:38}		
         ],[
-          {axis:"Shots",value:12},
+          {axis:"Shots",value:12, name: "Ronaldo"},
         {axis:"SoT",value:28},
         {axis:"Passes",value:29},
         {axis:"Touches",value:17},
@@ -47,23 +42,26 @@
         ]
       ];
 
-  var color = d3.scaleOrdinal()
-    .range(["#EDC951","#CC333F","#00A0B0"]);
-    
-  var radarChartOptions = {
-    w: width,
-    h: height,
-    margin: margin,
-    maxValue: 0.5,
-    levels: 5,
-    roundStrokes: true,
-    color: color
-  };
-  
-  RadarChart(".radarChart", data, radarChartOptions);
-}
+  function SetupRadarChart() {
+    var margin = {top: 100, right: 100, bottom: 100, left: 100},
+      width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
+      height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
 
-  function RadarChart(id: String, data: any[], options: {}) {
+    var color = d3.scaleOrdinal()
+      .range(["#EDC951","#CC333F","#00A0B0"]);
+      
+    var radarChartOptions = {
+      w: width,
+      h: height,
+      margin: margin,
+      maxValue: 0.5,
+      levels: 5,
+      roundStrokes: true,
+      color: color
+    };
+    
+    RadarChart(".radarChart", data, radarChartOptions);
+  }
 
     var cfg = {
       w: 600, //Width of the circle
@@ -80,6 +78,10 @@
       roundStrokes: false, //If true the area and stroke will follow a round path (cardinal-closed)
       color: d3.scaleOrdinal(d3.schemeCategory10), //Color function
     };
+
+  function RadarChart(id: String, data: any[], options: {}) {
+
+
 
     //Put all of the options into a variable called cfg
     if ("undefined" !== typeof options) {
@@ -376,13 +378,53 @@
     var tooltip = g.append("text").attr("class", "tooltip").style("opacity", 0);
   } //RadarChart
 
+  function buildLegend() {
+    // select the svg area
+    var svg = d3.select("#radarLegend")
+      .data(data)
+      .append("svg")
+      .attr("width", 350)
+      .attr("height", 350)
+    
+
+    //Append the backgrounds
+    for (let playerIndex = 0; playerIndex < data.length; playerIndex++) {
+      svg.append("circle").attr("cx",200).attr("cy",130 + playerIndex * 19).attr("r", 6)
+      .style("fill", function (d, i: any) {
+        return cfg.color(i);
+      })
+
+      .on("mouseover", function (d, i) {
+        
+      })
+      .on("mouseout", function () {
+
+      });
+      svg.append("text").attr("x", 220).attr("y", 130 + playerIndex * 22).text(`${data[playerIndex][0].name}`).style("font-size", "15px").attr("alignment-baseline","middle")
+    }
+    
+
+  }
+
+
 </script>
 
-<div>
-  <div class=""> </div>
+<div class="radarContainer">
+  <div id="radarLegend"></div>
   <div class="radarChart"></div>
 </div>
 
 
+<style>
+  .radarContainer {
+    display: flex;
+  }
 
+  #radarLegend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+  }
+</style>
 
