@@ -269,6 +269,9 @@
     blobWrapper
       .append("path")
       .attr("class", "radarArea")
+      .attr("id", function (d, i) {
+        return "area-" + d[0].name;
+      })
       .attr("d", function (d, i) {
         return radarLine(d);
       })
@@ -277,6 +280,7 @@
       })
       .style("fill-opacity", cfg.opacityArea)
       .on("mouseover", function (d, i) {
+        d3.select("#text-" + i[0].name).transition().duration(200).style("fill-opacity", 0.9);
         //Dim all blobs
         d3.selectAll(".radarArea")
           .transition()
@@ -285,7 +289,8 @@
         //Bring back the hovered over blob
         d3.select(this).transition().duration(200).style("fill-opacity", 0.7);
       })
-      .on("mouseout", function () {
+      .on("mouseout", function (d, i) {
+        d3.select("#text-" + i[0].name).transition().duration(200).style("fill-opacity", 0.5);
         //Bring back all blobs
         d3.selectAll(".radarArea")
           .transition()
@@ -383,29 +388,61 @@
     var svg = d3.select("#radarLegend")
       .data(data)
       .append("svg")
-      .attr("width", 350)
+      .attr("width", 275)
       .attr("height", 350)
-    
 
-    //Append the backgrounds
-    for (let playerIndex = 0; playerIndex < data.length; playerIndex++) {
-      svg.append("circle").attr("cx",200).attr("cy",130 + playerIndex * 19).attr("r", 6)
-      .style("fill", function (d, i: any) {
+    // Add one dot in the legend for each name.
+    svg.selectAll("mydots")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("cx", 100)
+        .attr("cy", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+        .attr("r", 7)
+        .style("fill", function (d, i: any) {
         return cfg.color(i);
       })
+      .append("text")
+       .attr("dx", function(d){return -20})
+       .text(function(d: any){ return d[0].name})
 
-      .on("mouseover", function (d, i) {
-        
+    // Add one dot in the legend for each name.
+    svg.selectAll("mylabels")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("id", function (d, i) {
+        return "text-" + d[0].name;
+      })
+        .attr("x", 120)
+        .attr("y", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+        .style("fill", function (d, i: any) {
+          return cfg.color(i);
+        })
+        .style("fill-opacity", 0.5)
+        .text(function(d: any){ return d[0].name})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")
+        .on("mouseover", function (d, i) {
+          d3.select(this).transition().duration(200).style("fill-opacity", 0.9)
+          //Dim all blobs
+          d3.selectAll(".radarArea")
+            .transition()
+            .duration(200)
+            .style("fill-opacity", 0.1);
+          //Bring back the hovered over blob
+          d3.select("#area-" + i[0].name).transition().duration(200).style("fill-opacity", 0.7);
       })
       .on("mouseout", function () {
-
+        d3.select(this).transition().duration(200).style("fill-opacity", 0.5)
+        //Bring back all blobs
+        d3.selectAll(".radarArea")
+          .transition()
+          .duration(200)
+          .style("fill-opacity", cfg.opacityArea);
       });
-      svg.append("text").attr("x", 220).attr("y", 130 + playerIndex * 22).text(`${data[playerIndex][0].name}`).style("font-size", "15px").attr("alignment-baseline","middle")
-    }
-    
 
   }
-
 
 </script>
 
