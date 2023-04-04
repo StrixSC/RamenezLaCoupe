@@ -3,16 +3,16 @@
   import { onMount } from 'svelte'
 
   let margin = {
-    top: 20,
+    top: 70,
     right: 75,
     bottom: 20,
-    left: 75
+    left: 85
   }
 
   let windowWidth = 1200
   let legendWidth = 300
   let vizContainerWidth = 900
-  let vizContainerHeight = 1000
+  let vizContainerHeight = 800
   let graphWidth = vizContainerWidth - margin.left - margin.right
   let graphHeight = vizContainerHeight - margin.top - margin.bottom
   let graphX = margin.left
@@ -78,7 +78,7 @@
     }
   
     .legend {
-      width: 33vw;
+      width: 40vw;
       height: 100%;
       background-color: #f5f5f5;
     }
@@ -86,7 +86,6 @@
     .vizContainer {
       flex: 1;
       height: 100%;
-      background-color: aquamarine;
     }
     .gf {
       fill: #81BDFC;
@@ -104,11 +103,53 @@
 
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <div class="legend">
-      <!-- Add your legend elements here -->
+      <p> This is some long TextThis is some long Text This is some long TextThis is some long TextThis is some long Text This is some long Text This is some long Textvv This is some long TextThis is some long Text This is some long Text This is some long Text This is some long TextThis is some long Text</p>
+      
+      <svg width={legendWidth}, height={vizContainerHeight}>
+
+        <rect
+          class="gf"
+          x = {legendWidth/2 + 60}
+          y = 20
+          width = 120
+          height = 50
+          fill='black'>
+
+        </rect>
+
+        <rect
+          class="ga"
+          x = {legendWidth/2 + 60}
+          y = 90
+          width = 120
+          height = 50
+          fill='black'>
+
+        </rect>
+
+        <rect
+          x = {legendWidth/2 + 60}
+          y = 160
+          width = 120
+          height = 50
+          fill='url(#diagonalHatchExGF)'>
+
+        </rect>
+
+        <rect
+          x = '50%'
+          y = 230
+          width = 120
+          height = 50
+          fill='url(#diagonalHatchExGA)'>
+
+        </rect>
+
+      </svg>
+    
     </div>
     <div class="vizContainer">
       <!-- The chart will be created in this div -->
-
       <div class="graph">
         <svg width={vizContainerWidth} height={vizContainerHeight}>
           
@@ -167,8 +208,6 @@
                 y={yOffsetFn(i)}
                 width={goalsScale(game.gf)}
                 height={barHeight}
-                stroke='black'
-                fill='red'
                 >
               </rect>
 
@@ -179,8 +218,6 @@
                 y={yOffsetFn(i)}
                 width={goalsScale(game.ga)}
                 height={barHeight}
-                stroke='black'
-                clip-path={`url(#gaCorner${i})`}
               >
               </rect>
 
@@ -192,9 +229,7 @@
                 y={yOffsetFn(i)}
                 width={goalsScale(game.xgf)}
                 height={barHeight}
-                stroke='black'
                 fill='url(#diagonalHatchExGF)'
-                clip-path={`url(#xgfCorner${i})`}
               >
               </rect>
 
@@ -205,9 +240,7 @@
                 y={yOffsetFn(i)}
                 width={goalsScale(game.xga)}
                 height={barHeight}
-                stroke='black'
                 fill='url(#diagonalHatchExGA)'
-                clip-path={`url(#xgaCorner${i})`}
               >
               </rect>
             
