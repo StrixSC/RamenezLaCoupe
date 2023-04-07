@@ -9,16 +9,6 @@
     left: 85
   }
 
-  let windowWidth = 1200
-  let legendWidth = 300
-  let vizContainerWidth = 900
-  let vizContainerHeight = 800
-  let graphWidth = vizContainerWidth - margin.left - margin.right
-  let graphHeight = vizContainerHeight - margin.top - margin.bottom
-  let graphX = margin.left
-  let graphY = margin.top
-  
-
   // function setSizes(){
   //   // Si on veut que ce soit dynamique
 
@@ -36,11 +26,9 @@
 
   onMount(() => {	
 
-    // window.addEventListener('resize', () => {
-    //   setSizes()
-    // })
 
-    console.log(margin.left)
+    buildViz();
+    //buildLegend();
 
 	});
 
@@ -54,260 +42,39 @@
       { game: "vs Argentina", gf: 3, xgf: 2.2, ga: 3, xga: 3.2 },
   ];
 
-  const maxG = 4.5
-  const goalsScale = d3
-    .scaleLinear()
-    .domain([0, maxG])
-    .range([0, graphWidth/2]);
+  function buildViz() {
+    const width = 1200 - margin.left - margin.right;
+    const height = 1200 - margin.top - margin.bottom;
 
-  const barHeight = 50
-  const barOffset = 40
+    const maxG = 4.5
+    const goalsScale = d3.scaleLinear().domain([0, maxG]).range([0, width/2]);
 
-  const yOffsetFn = (i) => graphY + (barHeight+barOffset) * i + margin.top;
+    const barHeight = 50
+    const barOffset = 40
 
-  
-  
+    const yOffsetFn = (i) => margin.top + (barHeight+barOffset) * i;
+
+    // Remove whatever chart with the same id/class that was present before in svg
+    d3.select("#viz1").selectAll("svg").remove();
+
+    // Create the svg
+    const svg = d3
+      .select("#viz1")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+
+    // Draw line in the middle of the graph
+    svg
+      .append("line")
+      .attr("x1", width/2)
+      .attr("y1", margin.top)
+      .attr("x2", width/2)
+      .attr("y2", height + margin.top)
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+  }  
 </script>
 
 
-
-<style>
-    .container {
-      display: flex;
-      height: 100vh;
-    }
-  
-    .legend {
-      width: 40vw;
-      height: 100%;
-      background-color: #f5f5f5;
-    }
-  
-    .vizContainer {
-      flex: 1;
-      height: 100%;
-    }
-    .gf {
-      fill: #81BDFC;
-      stroke: black;
-    }
-    .ga{
-      fill: #fc8787;
-      stroke: black;
-    }
-</style>
-
-
-
-<div class="container">
-
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-    <div class="legend">
-      <p> This is some long TextThis is some long Text This is some long TextThis is some long TextThis is some long Text This is some long Text This is some long Textvv This is some long TextThis is some long Text This is some long Text This is some long Text This is some long TextThis is some long Text</p>
-      
-      <svg width={legendWidth}, height={vizContainerHeight}>
-
-        <rect
-          class="gf"
-          x = {legendWidth/2 + 60}
-          y = 20
-          width = 120
-          height = 50
-          fill='black'>
-
-        </rect>
-
-        <rect
-          class="ga"
-          x = {legendWidth/2 + 60}
-          y = 90
-          width = 120
-          height = 50
-          fill='black'>
-
-        </rect>
-
-        <rect
-          x = {legendWidth/2 + 60}
-          y = 160
-          width = 120
-          height = 50
-          fill='url(#diagonalHatchExGF)'>
-
-        </rect>
-
-        <rect
-          x = '50%'
-          y = 230
-          width = 120
-          height = 50
-          fill='url(#diagonalHatchExGA)'>
-
-        </rect>
-
-      </svg>
-    
-    </div>
-    <div class="vizContainer">
-      <!-- The chart will be created in this div -->
-      <div class="graph">
-        <svg width={vizContainerWidth} height={vizContainerHeight}>
-          
-          <pattern
-            id="diagonalHatchExGF"
-            width=8
-            height=8
-            patternUnits='userSpaceOnUse'
-            patternTransform='rotate(45)'>
-            <line
-              x1=0
-              y1=4
-              x2=8
-              y2=4
-              stroke=blue
-              stroke-width=3
-            >
-            </line>
-          </pattern>
-
-          <pattern
-            id="diagonalHatchExGA"
-            width=8
-            height=8
-            patternUnits='userSpaceOnUse'
-            patternTransform='rotate(45)'>
-            <line
-                x1=0
-                y1=4
-                x2=8
-                y2=4
-                stroke=red
-                stroke-width=3
-            >
-            </line>
-          </pattern>
-          
-          <g>
-            <rect x={graphX} y={graphY} width={graphWidth} height={graphHeight} fill="white" />
-            
-            <line
-              x1 = {graphX + graphWidth/2}
-              x2 = {graphX + graphWidth/2}
-              y1 = {graphY}
-              y2 = {graphY + graphHeight}
-              stroke = 'black'>
-
-
-            </line>
-
-            {#each data as game, i}
-
-              <rect
-                class="gf"
-                x={graphX + graphWidth/2 - goalsScale(game.gf)}
-                y={yOffsetFn(i)}
-                width={goalsScale(game.gf)}
-                height={barHeight}
-                >
-              </rect>
-
-              <!-- goals against -->
-              <rect
-                class="ga"
-                x={graphWidth/2 + margin.left}
-                y={yOffsetFn(i)}
-                width={goalsScale(game.ga)}
-                height={barHeight}
-              >
-              </rect>
-
-            
-              <!-- expected goals for -->
-              <rect
-                class="xgf"
-                x={graphX + graphWidth/2 - goalsScale(game.xgf)}
-                y={yOffsetFn(i)}
-                width={goalsScale(game.xgf)}
-                height={barHeight}
-                fill='url(#diagonalHatchExGF)'
-              >
-              </rect>
-
-              <!-- expected goals against -->
-              <rect
-                class="xga"
-                x={graphWidth/2 + margin.left}
-                y={yOffsetFn(i)}
-                width={goalsScale(game.xga)}
-                height={barHeight}
-                fill='url(#diagonalHatchExGA)'
-              >
-              </rect>
-            
-
-              <!-- lines for each goals for -->
-              {#each Array.from({length: game.gf}, (v, i) => i) as g, j}
-                <line
-                  x1={graphX + graphWidth/2 - goalsScale(game.gf) + goalsScale(j+1)}
-                  x2={graphX + graphWidth/2 - goalsScale(game.gf) + goalsScale(j+1)}
-                  y1={yOffsetFn(i)}
-                  y2={yOffsetFn(i) + barHeight}
-                  stroke='black'>
-                </line>
-              {/each}
-
-              <!-- lines for each goals against -->
-              {#each Array.from({length: game.ga}, (v, i) => i) as g, j}
-                <line
-                  x1={graphX + graphWidth/2 + goalsScale(j+1)}
-                  x2={graphX + graphWidth/2 + goalsScale(j+1)}
-                  y1={yOffsetFn(i)}
-                  y2={yOffsetFn(i) + barHeight}
-                  stroke='black'>
-                </line>
-              {/each}
-
-
-              <!-- text on the left to show each game goals for -->
-              <text
-                x=10
-                y={yOffsetFn(i) + barHeight/2 + 5}
-                text-anchor='start'
-                font-size=17
-                font-weight=bold
-                fill='black'
-                font-family= 'Roboto'>
-                {game.gf} ({game.xgf})
-              </text>
-
-
-              <text
-                x={vizContainerWidth - 5}
-                y={yOffsetFn(i) + barHeight/2}
-                text-anchor='end'
-                font-size=17
-                font-weight=bold
-                fill='black'
-                font-family= 'Roboto'>
-                ({game.xga}) {game.ga}
-              </text>
-
-              <text
-                x={vizContainerWidth - 5}
-                y={yOffsetFn(i) + barHeight/2 + 22}
-                text-anchor='end'
-                font-size=13
-                fill='black'
-                font-family= 'Roboto'>
-                {game.game}
-              </text>
-
-            {/each}
-
-          </g>
-        </svg>
-      </div>
-
-    </div>
-</div>
-
+<div id="viz1"/>
