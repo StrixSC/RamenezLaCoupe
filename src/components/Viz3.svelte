@@ -3,68 +3,131 @@
 
     import type { Dimensions } from "../models/dimensions";
     import { onMount } from "svelte";
+    import { findMaximumKeyValue, getHighestColumnKey, parseData } from "../utils/viz3-helpers";
 
     export let datafile: string;
 
-    const margins = {
-        top: 10,
-        left: 50,
-        right: 30,
-        bottom: 10,
-    } as Dimensions;
+    const margins = { top: 80, right: 0, bottom: 80, left: 55 } as Dimensions;
+    let bounds;
+    let svgSize;
+    let graphSize;
+    const colors = [
+        '#ad8c2f',
+        '#97a515',
+        '#8a766b',
+        '#781d20',
+        '#9b7f68',
+        '#b0714c',
+        '#a13d79',
+    ]
 
-    const width = 1000 - margins.left - margins.right;
-    const height = 1000 - margins.top - margins.bottom;
-    let processedData: Map<string, Object> = new Map<string, Object>();
-    let opponentTotal;
-    let squadTotal;
+    const X_PADDING = 0.15;
+    const SUB_X_PADDING = 0.015;
 
     onMount(async () => {
-        let svg = d3
-            .select("#viz3")
-            .append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .append("g")
-            .attr("transform", `translate(${margins.left}, ${margins.top})`);
+        d3.csv(datafile).then((data) => {
+            const xScale = d3.scaleBand().padding(X_PADDING)
+            const xSubgroupScale = d3.scaleBand().padding(SUB_X_PADDING);
+            const yScale = d3.scaleLinear();
 
-        d3.csv(datafile).then(function (data) {
-            // Remove Opponent Total and Squad Total from list of players:
-            opponentTotal = data.find((d) => d["Player"] === "Opponent Total");
-            squadTotal = data.find((d) => d["Player"] === "Squad Total");
-            data.sort(
-                (a, b) =>
-                    parseInt(b["StandardxG"]!) - parseInt(a["StandardxG"]!)
-            );
-            for (const d of data) {
-                const entityName = d["Player"];
-                if (
-                    entityName === opponentTotal["Player"] ||
-                    entityName === squadTotal["Player"]
-                ) {
-                    continue;
+            const colNames = Object.values(data.splice(0, 1)[0]).slice(1) as string[];
+            const colKeys = Object.keys(data[0]).slice(1);
+            const parsedData = parseData(colKeys, data).slice(0, 3);
+            const highestColumnKey = getHighestColumnKey(colKeys, parsedData)
+
+
+            const colorScale = d3.scaleOrdinal().range(colors).domain(colKeys);
+
+            // Generate graph:
+            const g = d3.select('.graph')
+                .select('svg')
+                .append('g')
+                .attr('id', 'graph-g')
+                .attr('transform',
+                'translate(' + margins.left + ',' + margins.top + ')')
+
+            g.append('g')
+                .attr('class', 'x axis')
+
+            g.append('g')
+                .attr('class', 'y axis')
+
+            g.append('text')
+                .text('Comparaison de la performance des joueurs de la France')
+                .style('text-anchor', 'middle')
+                .attr('class', 'title')
+
+            setSizing()
+            build()
+
+            function setSizing () {
+                bounds = (d3.select('.graph').node() as any).getBoundingClientRect()
+
+                svgSize = {
+                    width: bounds.width,
+                    height: 600
                 }
 
-                processedData.set(entityName!, d);
+                graphSize = {
+                    width: svgSize.width - margins.right - margins.left,
+                    height: svgSize.height - margins.bottom - margins.top
+                }
+
+                d3.select('#bar-chart').select('svg')
+                    .attr('width', svgSize.width)
+                    .attr('height', svgSize.height)
             }
 
-            const subgroups = data.columns.slice(4, 7);
-            const groups = [...processedData.keys()].slice(0, 3);
+            function build () {
+                d3.select('.y.axis-text')
+                    .attr('x', -50)
+                    .attr('y', graphSize.height / 2)
 
-            const x = d3
-                .scaleBand()
-                .domain(groups)
-                .range([0, width])
-                .padding(0.2);
+                d3.select('.title')
+                    .attr('x', graphSize.width / 2)
+                    .attr('y', -35)
 
-            svg.append("g")
-                .attr("transform", `translate(0, ${height})`)
-                .call(d3.axisBottom(x).tickSize(0));
+                const xGroups = parsedData.map((d) => d.player);
+                const xSubgroups = colNames;
+                xScale.domain(xGroups).range([0, graphSize.width]);
+                xSubgroupScale.domain(xSubgroups).range([0, xScale.bandwidth()]);
+                yScale.domain([0, findMaximumKeyValue(colKeys, parsedData)]).range([graphSize.height, 0]);
 
-            var y = d3.scaleLinear().domain([0, 40]).range([height, 0]);
-            svg.append("g").call(d3.axisLeft(y));
+                d3.select('.x.axis')
+                    .attr('transform', `translate(0,${graphSize.height})`)
+                    .call((d3.axisBottom(xScale) as any).tickFormat(x => x.split(' ')[1]))
+                    
+                d3.select('.y.axis').call((d3.axisLeft(yScale) as any).ticks(5))
+                d3.select("#graph-g")
+                .selectAll(".group")
+                .data(parsedData)
+                .join("g")
+                .attr("class", "group")
+                .attr("transform", (group) => `translate(${xScale(group.player as string)})`);
+             
+                d3.select("#graph-g")
+                .selectAll(".group")
+                .selectAll("rect")
+                .data((d: any) => d)
+                .join("rect")
+                .attr("width", xSubgroupScale(xSubgroups[1])! - xSubgroupScale(xSubgroups[0])!)
+                .attr("height", (d: any) => graphSize.height - yScale(d[highestColumnKey]))
+                .attr("x", (d: any) => {
+                    console.log(d)
+                    return xSubgroupScale(Object.keys(d)[0])!
+                })
+                .attr("y", (d: any) => yScale(d[Object.keys(d)[0]]))
+                .style("fill", (d: any) => colorScale(Object.keys(d)[0]) as string)
+            }
+
+            window.addEventListener('resize', () => {
+                setSizing()
+                build()
+            })
         });
     });
 </script>
 
-<div id="viz3" />
+<div class="graph" id="bar-chart">
+    <svg class="main-svg"></svg>
+</div>
