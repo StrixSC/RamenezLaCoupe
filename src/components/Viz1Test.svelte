@@ -1,13 +1,231 @@
 <script lang="ts">
   import * as d3 from "d3";
   import { onMount } from 'svelte'
+  import {
+    transformGameData,
+		getMaxGoals
+  } from "../utils/viz1-helpers";
 
-  let margin = {
-    top: 70,
-    right: 75,
-    bottom: 20,
-    left: 85
-  }
+  import type { GameSummaryData } from "src/models/game-summary-data";
+
+  let _data: GameSummaryData[] = [];
+
+  const margins = { top: 40, right: 60, bottom: 80, left: 55 };
+
+  let bounds;
+  let svgSize;
+  let graphSize;
+
+  const font = "Georgia";
+
+  onMount(async () => {
+		Promise.all([
+      d3.csv("src/data/GamesStats/ScoresAndFixtures.csv")
+        .then((data) => _data = transformGameData(data))
+				.catch((error) => console.log(error))
+     ])
+		.then(() => {
+			
+			//console.log(_data)
+			setSizing();
+			build();
+		})
+
+		
+
+		// Generate graph:
+		const g = d3
+			.select(".graph")
+			.select("svg")
+			.append("g")
+			.attr("id", "graph-g")
+			.attr(
+					"transform",
+					"translate(" + margins.left + "," + margins.top + ")"
+			);
+
+			g.append("g").attr("class", "x axis");
+
+      g.append("g").attr("class", "y axis");
+
+
+			//setSizing();
+			//build();
+
+			function setSizing() {
+				bounds = (
+						d3.select(".graph").node() as any
+				).getBoundingClientRect();
+
+				svgSize = {
+						width: bounds.width,
+						height: 600,
+				};
+
+				graphSize = {
+						width: svgSize.width - margins.right - margins.left,
+						height: svgSize.height - margins.bottom - margins.top,
+				};
+
+				d3.select("#game-summary-chart")
+						.select("svg")
+						.attr("width", svgSize.width)
+						.attr("height", svgSize.height);
+      }
+			
+			function build() {
+
+				let maxG = getMaxGoals(_data);
+				console.log(maxG)
+				
+				const xScale = d3
+					.scaleLinear()
+					.domain([-maxG, maxG])
+					.range([0, graphSize.width]);
+				
+				const widthScale = d3
+					.scaleLinear()
+					.domain([0, maxG])
+					.range([0, graphSize.width/2]);
+				
+				const barHeight = 30;
+				const barOffset = 10;
+
+				const yScale = d3
+					.scaleBand()
+					.domain(_data.map((d) => d.opponent))
+					.range([0, graphSize.height])
+					.padding(0.1);
+
+
+				// Title
+				d3.select(".title")
+					.attr("class", "title")
+					.attr("x", graphSize.width / 2)
+					.attr("y", 45)
+					.attr("text-anchor", "middle")
+					.attr("font-size", "1.5rem")
+					.attr("font-family", font)
+					.text("Goals Scored");
+
+
+				//X-AXIS
+				d3.select(".x.axis")
+					.attr("transform", "translate(0," + graphSize.height + ")")
+					.call((d3.axisBottom(xScale) as any).ticks(10));
+
+				
+				// Add goals for bars
+				d3.select("#graph-g")
+					.selectAll(".goals-for")
+					.data(_data)
+					.join("rect")
+					.attr("class", "goals-for")
+					.attr("width", (d) => widthScale(d.GF))
+					.attr("x", (d) => xScale(-d.GF))
+					.attr("y", (d) => yScale(d.opponent))
+					.attr("height", barHeight)
+					.attr("fill", "#81BDFC")
+
+				// add xG for bars
+				d3.select("#graph-g")
+					.selectAll(".xG-for")
+					.data(_data)
+					.join("rect")
+					.attr("class", "xG-for")
+					.attr("width", (d) => widthScale(d.xGF))
+					.attr("x", (d) => xScale(-d.xGF))
+					.attr("y", (d) => yScale(d.opponent))
+					.attr("height", barHeight)
+					.attr("fill", "url(#diagonalHatchExGF)")
+
+				// add goals against bars
+				d3.select("#graph-g")
+					.selectAll(".goals-against")
+					.data(_data)
+					.join("rect")
+					.attr("class", "goals-against")
+					.attr("x", (d) => xScale(0))
+					.attr("y", (d) => yScale(d.opponent))
+					.attr("width", (d) => widthScale(d.GA))
+					.attr("height", barHeight)
+					.attr("fill", "#fc8787")
+
+				// add xG against bars
+				d3.select("#graph-g")
+					.selectAll(".xG-against")
+					.data(_data)
+					.join("rect")
+					.attr("class", "xG-against")
+					.attr("x", (d) => xScale(0))
+					.attr("y", (d) => yScale(d.opponent))
+					.attr("width", (d) => widthScale(d.xGA))
+					.attr("height", barHeight)
+					.attr("fill", "url(#diagonalHatchExGA)")
+
+				
+				// Add opponent names on the right side with goals for under
+				d3.select("#graph-g")
+					.selectAll(".opponent")
+					.data(_data)
+					.join("text")
+					.attr("class", "opponent")
+					.attr("x", (d) => graphSize.width)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2)
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "middle")
+					.attr("font-size", "0.8rem")
+					.attr("font-family", font)
+					.text((d) => d.opponent);
+
+				// Add goals for labels 
+				d3.select("#graph-g")
+					.selectAll(".goals-for-label")
+					.data(_data)
+					.join("text")
+					.attr("class", "goals-for-label")
+					.attr("x", (d) => 0)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "end")
+					.attr("font-size", "0.8rem")
+					.attr("font-family", font)
+					.text((d) => d.GF);
+
+				// Add goals against labels
+				d3.select("#graph-g")
+					.selectAll(".goals-against-label")
+					.data(_data)
+					.join("text")
+					.attr("class", "goals-against-label")
+					.attr("x", (d) => graphSize.width)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "middle")
+					.attr("font-size", "0.8rem")
+					.attr("font-family", font)
+					.text((d) => d.GA);
+
+				// Add legends for each bar fill under text
+					
+
+					
+			}
+
+			window.addEventListener("resize", () => {
+					setSizing();
+					build();
+			});
+
+			
+
+	});
+    
+    
+  
+    
+
+  // })
 
   // function setSizes(){
   //   // Si on veut que ce soit dynamique
@@ -24,57 +242,88 @@
   //   console.log(graphWidth)
   // }
 
-  onMount(() => {	
-
-
-    buildViz();
-    //buildLegend();
-
-	});
-
-  let data = [
-      { game: "vs Australia", gf: 4, xgf: 4, ga: 1, xga: 0.5 },
-      { game: "vs Denmark", gf: 2, xgf: 2.4, ga: 1, xga: 0.6},
-      { game: "vs Tunisia", gf: 0, xgf: 0.8, ga: 1, xga: 0.5 },
-      { game: "vs Poland", gf: 3, xgf: 1.4, ga: 1, xga: 1.7 },
-      { game: "vs England", gf: 2, xgf: 0.9, ga: 1, xga: 2.4 },
-      { game: "vs Morocoo", gf: 2, xgf: 2, ga: 0, xga: 0.9 },
-      { game: "vs Argentina", gf: 3, xgf: 2.2, ga: 3, xga: 3.2 },
-  ];
-
-  function buildViz() {
-    const width = 1200 - margin.left - margin.right;
-    const height = 1200 - margin.top - margin.bottom;
-
-    const maxG = 4.5
-    const goalsScale = d3.scaleLinear().domain([0, maxG]).range([0, width/2]);
-
-    const barHeight = 50
-    const barOffset = 40
-
-    const yOffsetFn = (i) => margin.top + (barHeight+barOffset) * i;
-
-    // Remove whatever chart with the same id/class that was present before in svg
-    d3.select("#viz1").selectAll("svg").remove();
-
-    // Create the svg
-    const svg = d3
-      .select("#viz1")
-      .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-
-    // Draw line in the middle of the graph
-    svg
-      .append("line")
-      .attr("x1", width/2)
-      .attr("y1", margin.top)
-      .attr("x2", width/2)
-      .attr("y2", height + margin.top)
-      .attr("stroke", "black")
-      .attr("stroke-width", 2)
-  }  
 </script>
 
 
-<div id="viz1"/>
+<div class="container">
+	<div class="text">
+			<h1>
+					Proident do excepteur dolor anim ullamco labore.
+			</h1>
+			<p>
+					Excepteur proident sunt occaecat ex occaecat mollit occaecat irure duis magna. Pariatur anim excepteur aliqua est. Excepteur laborum proident minim eiusmod. Culpa consequat ea reprehenderit minim. Labore pariatur est est Lorem laborum veniam adipisicing incididunt ea nisi amet non. Eiusmod ea nulla aliquip tempor nisi reprehenderit quis veniam. Do voluptate pariatur fugiat quis et et enim do ut occaecat ex quis.
+			</p>
+			
+	</div>
+	<div class="graph" id="game-summary-chart">
+			<svg class="main-svg">
+
+				<pattern
+              id="diagonalHatchExGF"
+              width=8
+              height=8
+              patternUnits='userSpaceOnUse'
+              patternTransform='rotate(45)'>
+              <line
+                x1=0
+                y1=4
+                x2=8
+                y2=4
+                stroke=blue
+                stroke-width=3
+              >
+              </line>
+        </pattern>
+  
+				<pattern
+					id="diagonalHatchExGA"
+					width=8
+					height=8
+					patternUnits='userSpaceOnUse'
+					patternTransform='rotate(45)'>
+					<line
+							x1=0
+							y1=4
+							x2=8
+							y2=4
+							stroke=red
+							stroke-width=3
+					>
+					</line>
+				</pattern>
+
+			</svg>
+	</div>
+</div>
+
+<style>
+	* {
+			font-family: Georgia, "Times New Roman", Times, serif !important;
+	}
+
+	:global(.hoverable-element:hover) {
+			cursor: pointer;
+			text-decoration: underline;
+	}
+
+	.container {
+			width: 100%;
+			display: flex;
+	}
+	
+	.text {
+			flex: 2;
+			flex-direction: column;
+			padding: 1.5rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+	}
+
+	.graph {
+			flex: 3;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+	}
+</style>
