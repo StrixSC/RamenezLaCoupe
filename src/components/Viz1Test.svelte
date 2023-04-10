@@ -18,14 +18,6 @@
 
   const legendData = [
 		{
-			fill: "url(#diagonalHatchExGF)",
-			label: "(Expected Goals For)",
-			fontweight : "normal"
-		},{
-			fill: "url(#diagonalHatchExGA)",
-			label: "(Expected Goals Against)",
-			fontweight : "normal"
-		},{
 			fill: "#81BDFC",
 			label: "Goals For",
 			fontweight : "bold"
@@ -33,6 +25,14 @@
 			fill: "#fc8787",
 			label: "Goals Against",
 			fontweight : "bold"
+		},{
+			fill: "url(#diagonalHatchExGF)",
+			label: "(Expected Goals For)",
+			fontweight : "normal"
+		},{
+			fill: "url(#diagonalHatchExGA)",
+			label: "(Expected Goals Against)",
+			fontweight : "normal"
 		}
 	];
 
@@ -191,7 +191,7 @@
 					.join("text")
 					.attr("class", "opponent")
 					.attr("x", (d) => graphSize.width)
-					.attr("y", (d) => yScale(d.opponent) + barHeight / 2)
+					.attr("y", (d) => yScale(d.opponent))
 					.attr("dy", "0.35em")
 					.attr("text-anchor", "middle")
 					.attr("font-size", "0.8rem")
@@ -205,11 +205,11 @@
 					.join("text")
 					.attr("class", "goals-for-label")
 					.attr("x", (d) => 0)
-					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
+					.attr("y", (d) => yScale(d.opponent) + barHeight/2)
 					.attr("dy", "0.35em")
 					.attr("font-weight", "bold")
-					.attr("text-anchor", "end")
-					.attr("font-size", "0.8rem")
+					.attr("text-anchor", "middle")
+					.attr("font-size", "1rem")
 					.attr("font-family", font)
 					.text((d) => d.GF);
 
@@ -220,11 +220,11 @@
 					.join("text")
 					.attr("class", "goals-against-label")
 					.attr("x", (d) => graphSize.width)
-					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
+					.attr("y", (d) => yScale(d.opponent) + barHeight/2)
 					.attr("dy", "0.35em")
 					.attr("font-weight", "bold")
 					.attr("text-anchor", "middle")
-					.attr("font-size", "0.8rem")
+					.attr("font-size", "1rem")
 					.attr("font-family", font)
 					.text((d) => d.GA);
 
@@ -235,9 +235,9 @@
 					.join("text")
 					.attr("class", "xG-for-label")
 					.attr("x", (d) => 0)
-					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 - 10)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 15)
 					.attr("dy", "0.35em")
-					.attr("text-anchor", "end")
+					.attr("text-anchor", "middle")
 					.attr("font-size", "0.8rem")
 					.attr("font-family", font)
 					.text((d) => '(' + d.xGF + ')');
@@ -249,7 +249,7 @@
 					.join("text")
 					.attr("class", "xG-against-label")
 					.attr("x", (d) => graphSize.width)
-					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 - 10)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 15)
 					.attr("dy", "0.35em")
 					.attr("text-anchor", "middle")
 					.attr("font-size", "0.8rem")
