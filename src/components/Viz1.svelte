@@ -64,9 +64,6 @@
     const barOffset = 40
   
     const yOffsetFn = (i) => graphY + (barHeight+barOffset) * i + margin.top;
-  
-    
-    
 </script>
   
   
