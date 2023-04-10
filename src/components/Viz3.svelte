@@ -122,8 +122,14 @@
 
             // X-Axis:
             d3.select(".x.axis")
+                .attr('font-size', '12px')
                 .attr("transform", `translate(0,${graphSize.height})`)
-                .call((d3.axisBottom(xScale) as any).tickFormat((x) => x));
+                .call((d3.axisBottom(xScale) as any).tickFormat((x) => x))
+                .selectAll("text")  
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)" );
 
             // Y Axis:
             d3.select(".y.axis").call((d3.axisLeft(yScale) as any).ticks(5));
@@ -147,11 +153,11 @@
                 .data((d: any) => [d])
                 .join("rect")
                 .attr("x", (d: PlayerData) => xSubgroupsScale(d.subgroup)!)
-                .attr("y", (d: PlayerData) => yScale(d.value))
+                .attr("y", graphSize.height)
                 .attr("width", xSubgroupsScale.bandwidth())
                 .attr(
                     "height",
-                    (d: PlayerData) => graphSize.height - yScale(d.value)
+                    0
                 )
                 .attr("class", "hoverable-element")
                 .style(
@@ -175,6 +181,14 @@
                 })
                 .transition()
                 .duration(1000)
+                .attr(
+                    "height",
+                    (d: PlayerData) => graphSize.height - yScale(d.value)
+                )
+                .attr(
+                    "y",
+                    (d: PlayerData) => yScale(d.value)
+                )
         }
 
         window.addEventListener("resize", () => {
@@ -184,8 +198,19 @@
     });
 </script>
 
-<div class="graph" id="bar-chart">
-    <svg class="main-svg" />
+<div class="container">
+    <div class="text">
+        <h1>
+            Proident do excepteur dolor anim ullamco labore.
+        </h1>
+        <p>
+            Excepteur proident sunt occaecat ex occaecat mollit occaecat irure duis magna. Pariatur anim excepteur aliqua est. Excepteur laborum proident minim eiusmod. Culpa consequat ea reprehenderit minim. Labore pariatur est est Lorem laborum veniam adipisicing incididunt ea nisi amet non. Eiusmod ea nulla aliquip tempor nisi reprehenderit quis veniam. Do voluptate pariatur fugiat quis et et enim do ut occaecat ex quis.
+        </p>
+        
+    </div>
+    <div class="graph" id="bar-chart">
+        <svg class="main-svg" />
+    </div>
 </div>
 
 <style>
@@ -198,7 +223,24 @@
         text-decoration: underline;
     }
 
-    :global(.tick) {
-        font-size: 8px;
+    .container {
+        width: 100%;
+        display: flex;
+    }
+    
+    .text {
+        flex: 2;
+        flex-direction: column;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .graph {
+        flex: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
