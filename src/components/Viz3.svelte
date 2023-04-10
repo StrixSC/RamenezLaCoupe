@@ -60,7 +60,7 @@
         scroller = scrollama();
         scroller.setup({
             step: ".scroll__text .step", // the step elements
-            offset: 0.5, // set the trigger to be 1/2 way down screen
+            offset: 0.6, // set the trigger to be 1/2 way down screen
             debug: false, // display the trigger offset for testing
         })
         .onStepEnter(handleStepEnter);
@@ -68,14 +68,14 @@
 
         Promise.all([
             d3
-                .csv("/src/data/PlayerStats/France/Offensive_1.csv")
+                .csv("/data/PlayerStats/France/Offensive_1.csv")
                 .then((data) => _data.push(transformData(data)))
                 .catch((e) => {
                     console.error(e);
                     _data.push([]);
                 }),
             d3
-                .csv("/src/data/PlayerStats/France/Offensive_2.csv")
+                .csv("/data/PlayerStats/France/Offensive_2.csv")
                 .then((data) => _data.push(transformData(data)))
                 .catch((e) => {
                     console.error(e);
@@ -96,10 +96,9 @@
             .attr(
                 "transform",
                 "translate(" + margins.left + "," + margins.top + ")"
-            );
+        );
 
         g.append("g").attr("class", "x axis");
-
         g.append("g").attr("class", "y axis");
 
         setSizing();
@@ -278,14 +277,15 @@
     .scroll__graphic {
         position: fixed;
         top: 0;
-        right: 0;
+        right: 1rem;
         bottom: auto;
         width: 50%;
         height: 100%;
     }
 
     .scroll__text {
-        padding: 0 1rem;
+        padding-top: 1rem;
+        padding-left: 1rem;
         height: 100%;
         width: 40%;
     }
