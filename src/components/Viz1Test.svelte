@@ -16,6 +16,26 @@
   let svgSize;
   let graphSize;
 
+  const legendData = [
+		{
+			fill: "url(#diagonalHatchExGF)",
+			label: "(Expected Goals For)",
+			fontweight : "normal"
+		},{
+			fill: "url(#diagonalHatchExGA)",
+			label: "(Expected Goals Against)",
+			fontweight : "normal"
+		},{
+			fill: "#81BDFC",
+			label: "Goals For",
+			fontweight : "bold"
+		},{
+			fill: "#fc8787",
+			label: "Goals Against",
+			fontweight : "bold"
+		}
+	];
+
   const font = "Georgia";
 
   onMount(async () => {
@@ -187,6 +207,7 @@
 					.attr("x", (d) => 0)
 					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
 					.attr("dy", "0.35em")
+					.attr("font-weight", "bold")
 					.attr("text-anchor", "end")
 					.attr("font-size", "0.8rem")
 					.attr("font-family", font)
@@ -201,13 +222,64 @@
 					.attr("x", (d) => graphSize.width)
 					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 + 10)
 					.attr("dy", "0.35em")
+					.attr("font-weight", "bold")
 					.attr("text-anchor", "middle")
 					.attr("font-size", "0.8rem")
 					.attr("font-family", font)
 					.text((d) => d.GA);
 
+				// Add xG for labels
+				d3.select("#graph-g")
+					.selectAll(".xG-for-label")
+					.data(_data)
+					.join("text")
+					.attr("class", "xG-for-label")
+					.attr("x", (d) => 0)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 - 10)
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "end")
+					.attr("font-size", "0.8rem")
+					.attr("font-family", font)
+					.text((d) => '(' + d.xGF + ')');
+
+				// Add xG against labels
+				d3.select("#graph-g")
+					.selectAll(".xG-against-label")
+					.data(_data)
+					.join("text")
+					.attr("class", "xG-against-label")
+					.attr("x", (d) => graphSize.width)
+					.attr("y", (d) => yScale(d.opponent) + barHeight / 2 - 10)
+					.attr("dy", "0.35em")
+					.attr("text-anchor", "middle")
+					.attr("font-size", "0.8rem")
+					.attr("font-family", font)
+					.text((d) => '(' + d.xGA + ')');
+
 				// Add legends for each bar fill under text
-					
+				d3.select(".legeng-svg")
+					.selectAll('rect')
+					.data(legendData)
+					.enter()
+					.append('rect')
+					.attr('x', (d, i) => 0)
+					.attr('y', (d, i) => 30 + i *30)
+					.attr('width', 60)
+					.attr('height', 20)
+					.attr('fill', (d) => d.fill);
+
+				d3.select(".legeng-svg")
+					.selectAll('text')
+					.data(legendData)
+					.enter()
+					.append('text')
+					.attr('x', (d, i) => 70)
+					.attr('y', (d, i) => 30 + i *30 + 15)
+					.attr('font-size', '0.8rem')
+					.attr('font-family', font)
+					.attr('font-weight', (d) => d.fontweight)
+					.text((d) => d.label);
+
 
 					
 			}
@@ -253,6 +325,10 @@
 			<p>
 					Excepteur proident sunt occaecat ex occaecat mollit occaecat irure duis magna. Pariatur anim excepteur aliqua est. Excepteur laborum proident minim eiusmod. Culpa consequat ea reprehenderit minim. Labore pariatur est est Lorem laborum veniam adipisicing incididunt ea nisi amet non. Eiusmod ea nulla aliquip tempor nisi reprehenderit quis veniam. Do voluptate pariatur fugiat quis et et enim do ut occaecat ex quis.
 			</p>
+
+			<svg class="legeng-svg">
+
+			</svg>
 			
 	</div>
 	<div class="graph" id="game-summary-chart">
