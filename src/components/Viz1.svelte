@@ -47,7 +47,7 @@
         ]).then(() => {
             //console.log(_data)
             setSizing();
-            build();
+            build(true);
         });
 
         // Generate graph:
@@ -89,7 +89,7 @@
                 .attr("height", svgSize.height);
         }
 
-        function build() {
+        function build(anime=false) {
             let maxG = getMaxGoals(_data);
             console.log(maxG);
 
@@ -128,52 +128,87 @@
                 .call((d3.axisBottom(xScale) as any).ticks(10));
 
             // Add goals for bars
-            d3.select("#graph-g")
+            var gf = d3.select("#graph-g")
                 .selectAll(".goals-for")
                 .data(_data)
                 .join("rect")
                 .attr("class", "goals-for")
-                .attr("width", (d) => widthScale(d.GF))
-                .attr("x", (d) => xScale(-d.GF))
+                .attr("x", graphSize.width/2)
                 .attr("y", (d) => yScale(d.opponent)!)
                 .attr("height", barHeight)
                 .attr("fill", "#81BDFC");
+			
+			if (anime) {
+				gf.transition()
+					.duration(1000)
+					.attr("width", (d) => widthScale(d.GF))
+					.attr("x", (d) => xScale(-d.GF))
+			} else {
+				gf.attr("width", (d) => widthScale(d.GF))
+					.attr("x", (d) => xScale(-d.GF))
+			}
 
             // add xG for bars
-            d3.select("#graph-g")
+            var xgf = d3.select("#graph-g")
                 .selectAll(".xG-for")
                 .data(_data)
                 .join("rect")
                 .attr("class", "xG-for")
-                .attr("width", (d) => widthScale(d.xGF))
-                .attr("x", (d) => xScale(-d.xGF))
+                .attr("x", graphSize.width/2)
                 .attr("y", (d) => yScale(d.opponent)!)
                 .attr("height", barHeight)
                 .attr("fill", "url(#diagonalHatchExGF)");
 
+			if (anime) {
+				xgf.transition()
+					.duration(1000)
+					.attr("width", (d) => widthScale(d.xGF))
+					.attr("x", (d) => xScale(-d.xGF));
+			} else {
+				xgf.attr("width", (d) => widthScale(d.xGF))
+					.attr("x", (d) => xScale(-d.xGF));
+			}
+			
+
+
             // add goals against bars
-            d3.select("#graph-g")
+            var ga = d3.select("#graph-g")
                 .selectAll(".goals-against")
                 .data(_data)
                 .join("rect")
                 .attr("class", "goals-against")
                 .attr("x", (d) => xScale(0))
                 .attr("y", (d) => yScale(d.opponent)!)
-                .attr("width", (d) => widthScale(d.GA))
                 .attr("height", barHeight)
                 .attr("fill", "#fc8787");
 
+			if (anime) {
+				ga.transition()
+					.duration(1000)
+					.attr("width", (d) => widthScale(d.GA));
+			} else {
+				ga.attr("width", (d) => widthScale(d.GA));
+			}
+
             // add xG against bars
-            d3.select("#graph-g")
+            var xga = d3.select("#graph-g")
                 .selectAll(".xG-against")
                 .data(_data)
                 .join("rect")
                 .attr("class", "xG-against")
                 .attr("x", (d) => xScale(0))
                 .attr("y", (d) => yScale(d.opponent)!)
-                .attr("width", (d) => widthScale(d.xGA))
                 .attr("height", barHeight)
                 .attr("fill", "url(#diagonalHatchExGA)");
+			
+			if (anime) {
+				xga.transition()
+					.duration(1000)
+					.attr("width", (d) => widthScale(d.xGA));
+			} else {
+				xga.attr("width", (d) => widthScale(d.xGA));
+			}
+
 
             // Add opponent names on the right side with goals for under
             d3.select("#graph-g")
