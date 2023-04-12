@@ -1,14 +1,85 @@
 <script lang="ts">
   
   import * as d3 from "d3";
+    import type { PlayerData } from "src/models/france-player-data";
+    import { transformData } from "../utils/viz3-helpers";
   import { onMount } from 'svelte'
+  import scrollama from "scrollama";
+
+  let _data: PlayerData[][] = [];
+  let current: PlayerData[] = [];
+  let currentAxis = [{}];
     
+  let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+  let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+  let chart: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+  let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+  let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
+  let scroller: scrollama.ScrollamaInstance;
+
+  const handleStepEnter = (response: any) => {
+        // response = { element, direction, index }
+
+        // fade in current step
+        step.classed("is-active", (_, i) => {
+            return i === response.index;
+        });
+
+        // update graphic based on step here
+        const stepData = parseFloat(response.element.getAttribute('data-step'));
+        switch(stepData) {
+          case 1:
+            currentAxis = chartAxis[0];
+            SetupRadarChart();
+            break;
+          case 2:
+            currentAxis = chartAxis[1];
+            SetupRadarChart();
+            break;
+        }
+    };
+
   ////////////////////////////////////////////////////////////// 
   //////////////////////// Set-Up ////////////////////////////// 
   ////////////////////////////////////////////////////////////// 
   onMount(async () => {
+    container = d3.select("#scroll");
+        graphic = container.select(".scroll__graphic");
+        chart = graphic.select(".chart");
+        text = container.select(".scroll__text");
+        step = text.selectAll(".step");
+        scroller = scrollama();
+        scroller.setup({
+            step: ".scroll__text .step", // the step elements
+            offset: 0.6, // set the trigger to be 1/2 way down screen
+            debug: false, // display the trigger offset for testing
+        })
+        .onStepEnter(handleStepEnter);
+
+    Promise.all([
+            d3
+                .csv("/data/PlayerStats/France/Offensive_1.csv")
+                .then((data) => _data.push(transformData(data)))
+                .catch((e) => {
+                    console.error(e);
+                    _data.push([]);
+                }),
+            d3
+                .csv("/data/PlayerStats/France/Offensive_2.csv")
+                .then((data) => _data.push(transformData(data)))
+                .catch((e) => {
+                    console.error(e);
+                    _data.push([]);
+                }),
+        ]).then(() => {
+            current = _data[0];
+        });
+    
+    currentAxis = chartAxis[0];
+
     SetupRadarChart();
     buildLegend();
+
   })
 
   var data = [
@@ -41,6 +112,26 @@
         {axis:"Tackle",value:50}		
         ]
       ];
+
+      var chartAxis = [
+						[{axis:"Shots"},
+						{axis:"SoT"},
+						{axis:"Passes"},
+						{axis:"Touches"},
+						{axis:"Dribbles"},
+						{axis:"Blocks"},
+						{axis:"Interceptions"},
+						{axis:"Tackle"}],
+
+            [{axis:"Tackle"},
+						{axis:"Interceptions"},
+						{axis:"Blocks"},
+						{axis:"Dribbles"},
+						{axis:"Touches"},
+						{axis:"Passes"},
+						{axis:"SoT"},
+						{axis:"Shots"}],
+				]
 
   function SetupRadarChart() {
     var margin = {top: 100, right: 100, bottom: 100, left: 100},
@@ -80,9 +171,6 @@
     };
 
   function RadarChart(id: String, data: any[], options: {}) {
-
-
-
     //Put all of the options into a variable called cfg
     if ("undefined" !== typeof options) {
       for (var i in options) {
@@ -103,16 +191,7 @@
         );
       }) as unknown as number);
 
-    var allAxis =  [//iPhone
-						{axis:"Shots"},
-						{axis:"SoT"},
-						{axis:"Passes"},
-						{axis:"Touches"},
-						{axis:"Dribbles"},
-						{axis:"Blocks"},
-						{axis:"Interceptions"},
-						{axis:"Tackle"}			
-				].map(function (i: any, j) {
+    var allAxis = currentAxis.map(function (i: any, j) {
         return i.axis;
       }), //Names of each axis
       total = allAxis.length, //The number of different axes
@@ -265,6 +344,7 @@
       .append("g")
       .attr("class", "radarWrapper");
 
+      
     //Append the backgrounds
     blobWrapper
       .append("path")
@@ -337,7 +417,7 @@
     //////// Append invisible circles for tooltip ///////////
     /////////////////////////////////////////////////////////
 
-    //Wrapper for the invisible circles on top
+    // Wrapper for the invisible circles on top
     var blobCircleWrapper = g
       .selectAll(".radarCircleWrapper")
       .data(data)
@@ -345,7 +425,7 @@
       .append("g")
       .attr("class", "radarCircleWrapper");
 
-    //Append a set of invisible circles on top for the mouseover pop-up
+    // Append a set of invisible circles on top for the mouseover pop-up
     blobCircleWrapper
       .selectAll(".radarInvisibleCircle")
       .data(function (d, i) {
@@ -419,6 +499,7 @@
         .style("fill", function (d, i: any) {
           return cfg.color(i);
         })
+        .style("font-weight", 900)
         .style("fill-opacity", 0.5)
         .text(function(d: any){ return d[0].name})
         .attr("text-anchor", "left")
@@ -446,22 +527,95 @@
 
 </script>
 
-<div class="radarContainer">
-  <div id="radarLegend"></div>
-  <div class="radarChart"></div>
+<div class="container" id="scroll">
+  <div class="radarContainer">
+  
+    <div class="radarChart"></div>
+  </div>
+  <div class="scroll__text">
+    <div class="step" data-step="1">
+        <h1>Offensive</h1>
+        <p>
+          Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
+        </p>
+        <div id="radarLegend"></div>
+    </div>
+    <div class="step" data-step="2">
+      <h1>Defensive</h1>
+      <p>
+        Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
+      </p>
+      <div id="radarLegend"></div>
+    </div>
+    <div class="step" data-step="3">
+        <h1>Step 3</h1>
+    </div>
+    <div class="step" data-step="4">
+        <h1>Step 4</h1>
+    </div>
+  </div>
 </div>
 
-
 <style>
-  .radarContainer {
-    display: flex;
-  }
+    * {
+      font-family: Georgia, "Times New Roman", Times, serif !important;
+    }
+    
 
-  #radarLegend {
+  .radarContainer {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    position: fixed;
+    top: 0;
+    right: 1rem;
+    bottom: auto;
+    width: 50%;
+    height: 100%;
   }
+
+  
+  :global(.hoverable-element:hover) {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+
+    #scroll {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .scroll__text {
+        padding-top: 1rem;
+        padding-left: 1rem;
+        height: 100%;
+        width: 40%;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      border: 1px solid palevioletred;
+      padding: 1rem;
+      min-height: 100%;
+    }
+
+    :global(.step.is-active) {
+        opacity: 1;
+    }
+
+    :global(.scroll__graphic.is-fixed) {
+        position: fixed;
+    }
+
+    :global(.scroll__graphic.is-bottom) {
+        bottom: 0;
+        top: auto;
+    }
 </style>
 
