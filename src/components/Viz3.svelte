@@ -11,6 +11,15 @@
     } from "../utils/viz3-helpers";
     import type { PlayerData } from "src/models/france-player-data";
 
+    let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+    let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+    let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+    let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
+    let scroller: scrollama.ScrollamaInstance;
+    let bounds: DOMRect;
+    let svgSize: { width: number, height: number };
+    let graphSize: { width: number, height: number };
+
     const handleStepEnter = (response: any) => {
         // response = { element, direction, index }
 
@@ -20,7 +29,7 @@
         });
 
         // update graphic based on step here
-        const stepData = parseFloat(response.element.getAttribute('data-step'));
+        const stepData = parseFloat(response.element.getAttribute('data-step-viz3'));
         console.log(stepData);
     };
 
@@ -30,16 +39,6 @@
 
     const X_PADDING = 0.15;
     const SUB_X_PADDING = 0.015;
-
-    let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-    let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-    let chart: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-    let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
-    let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
-    let scroller: scrollama.ScrollamaInstance;
-    let bounds: DOMRect;
-    let svgSize: { width: number, height: number };
-    let graphSize: { width: number, height: number };
 
     const colors = [
         "#74ae59",
@@ -52,14 +51,13 @@
     ];
 
     onMount(async () => {
-        container = d3.select("#scroll");
-        graphic = container.select(".scroll__graphic");
-        chart = graphic.select(".chart");
-        text = container.select(".scroll__text");
-        step = text.selectAll(".step");
+        container = d3.select("#scroll-viz3");
+        graphic = container.select(".scroll__graphic-viz3");
+        text = container.select(".scroll__text-viz3");
+        step = text.selectAll(".step-viz3");
         scroller = scrollama();
         scroller.setup({
-            step: ".scroll__text .step", // the step elements
+            step: ".scroll__text-viz3 .step-viz3", // the step elements
             offset: 0.6, // set the trigger to be 1/2 way down screen
             debug: false, // display the trigger offset for testing
         })
@@ -81,7 +79,8 @@
                     console.error(e);
                     _data.push([]);
                 }),
-        ]).then(() => {
+        ]).then((value) => {
+            console.log(value);
             current = _data[0];
             setSizing();
             build();
@@ -89,24 +88,24 @@
 
         // Generate graph:
         const g = d3
-            .select(".graph")
+            .select(".graph-viz3")
             .select("svg")
             .append("g")
-            .attr("id", "graph-g")
+            .attr("id", "graph-g-viz3")
             .attr(
                 "transform",
                 "translate(" + margins.left + "," + margins.top + ")"
         );
 
-        g.append("g").attr("class", "x axis");
-        g.append("g").attr("class", "y axis");
+        g.append("g").attr("class", "x-axis-viz3");
+        g.append("g").attr("class", "y-axis-viz3");
 
         setSizing();
         build();
 
         function setSizing() {
             bounds = (
-                d3.select(".graph").node() as any
+                d3.select(".graph-viz3").node() as any
             ).getBoundingClientRect();
 
             svgSize = {
@@ -119,13 +118,14 @@
                 height: svgSize.height - margins.bottom - margins.top,
             };
 
-            d3.select("#bar-chart")
+            d3.select("#bar-chart-viz3")
                 .select("svg")
                 .attr("width", svgSize.width)
                 .attr("height", svgSize.height);
         }
 
         function build() {
+            console.log(_data);
             const groups = getDataGroups(current);
             const subgroups = getDataSubgroups(current);
             const xScale = d3
@@ -153,7 +153,7 @@
                 .attr("y", -35);
 
             // X-Axis:
-            d3.select(".x.axis")
+            d3.select(".x-axis-viz3")
                 .attr("font-size", "12px")
                 .attr("transform", `translate(0,${graphSize.height})`)
                 .call((d3.axisBottom(xScale) as any).tickFormat((x) => x))
@@ -164,10 +164,10 @@
                 .attr("transform", "rotate(-45)");
 
             // Y Axis:
-            d3.select(".y.axis").call((d3.axisLeft(yScale) as any).ticks(5));
+            d3.select(".y-axis-viz3").call((d3.axisLeft(yScale) as any).ticks(5));
 
             // Groups:
-            d3.select("#graph-g")
+            d3.select("#graph-g-viz3")
                 .selectAll(".group")
                 .data(current)
                 .join("g")
@@ -178,7 +178,7 @@
                 );
 
             // Subgroups:
-            d3.select("#graph-g")
+            d3.select("#graph-g-viz3")
                 .selectAll(".group")
                 .selectAll("rect")
 
@@ -224,89 +224,42 @@
     });
 </script>
 
-<div class="container" id="scroll">
-    <div class="scroll__graphic">
-        <div class="graph" id="bar-chart">
+<main>
+<div class="container-viz3" id="scroll-viz3">
+    <div class="scroll__graphic-viz3 graph-viz3" id="bar-chart-viz3">
             <svg class="main-svg" />
-        </div>
     </div>
-    <div class="scroll__text">
-        <div class="step" data-step="1">
+    <div class="scroll__text-viz3">
+        <div class="step-viz3" data-step-viz3="1">
             <h1>Step 1</h1>
         </div>
-        <div class="step" data-step="2">
+        <div class="step-viz3" data-step-viz3="2">
             <h1>Anim anim nulla aliqua consectetur exercitation voluptate sint aliquip.</h1>
             <p>
                 Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
             </p>
         </div>
-        <div class="step" data-step="3">
+        <div class="step-viz3" data-step-viz3="3">
             <h1>Step 3</h1>
         </div>
-        <div class="step" data-step="4">
+        <div class="step-viz3" data-step-viz3="4">
             <h1>Step 4</h1>
         </div>
-        <div class="step" data-step="5">
+        <div class="step-viz3" data-step-viz3="5">
             <h1>Step 5</h1>
         </div>
-        <div class="step" data-step="6">
+        <div class="step-viz3" data-step-viz3="6">
             <h1>Step 6</h1>
         </div>
-        <div class="step" data-step="7">
+        <div class="step-viz3" data-step-viz3="7">
             <h1>Step 7</h1>
         </div>
     </div>
 </div>
-
+</main>
 <style>
-    * {
-        font-family: Georgia, "Times New Roman", Times, serif !important;
-    }
 
-    :global(.hoverable-element:hover) {
-        cursor: pointer;
-        text-decoration: underline;
-    }
-
-    #scroll {
-        position: relative;
+    .graph-viz3 {
         width: 100%;
-        height: 100vh;
-    }
-
-    .scroll__graphic {
-        position: fixed;
-        top: 0;
-        right: 1rem;
-        bottom: auto;
-        width: 50%;
-        height: 100%;
-    }
-
-    .scroll__text {
-        padding-top: 1rem;
-        padding-left: 1rem;
-        height: 100%;
-        width: 40%;
-    }
-
-    .step {
-        opacity: 0;
-        border: 1px solid palevioletred;
-        padding: 1rem;
-        min-height: 100%;
-    }
-
-    :global(.step.is-active) {
-        opacity: 1;
-    }
-
-    :global(.scroll__graphic.is-fixed) {
-        position: fixed;
-    }
-
-    :global(.scroll__graphic.is-bottom) {
-        bottom: 0;
-        top: auto;
     }
 </style>

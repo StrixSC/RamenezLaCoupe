@@ -528,8 +528,7 @@
 </script>
 
 <div class="container" id="scroll">
-  <div class="radarContainer">
-  
+  <div class="scroll__graphic radarContainer">
     <div class="radarChart"></div>
   </div>
   <div class="scroll__text">
@@ -560,62 +559,11 @@
     * {
       font-family: Georgia, "Times New Roman", Times, serif !important;
     }
-    
 
   .radarContainer {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
-    top: 0;
-    right: 1rem;
-    bottom: auto;
-    width: 50%;
-    height: 100%;
   }
-
-  
-  :global(.hoverable-element:hover) {
-        cursor: pointer;
-        text-decoration: underline;
-    }
-
-    #scroll {
-        position: relative;
-        width: 100%;
-        height: 100vh;
-    }
-
-    .scroll__text {
-        padding-top: 1rem;
-        padding-left: 1rem;
-        height: 100%;
-        width: 40%;
-    }
-
-    .step {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      opacity: 0;
-      border: 1px solid palevioletred;
-      padding: 1rem;
-      min-height: 100%;
-    }
-
-    :global(.step.is-active) {
-        opacity: 1;
-    }
-
-    :global(.scroll__graphic.is-fixed) {
-        position: fixed;
-    }
-
-    :global(.scroll__graphic.is-bottom) {
-        bottom: 0;
-        top: auto;
-    }
 </style>
 

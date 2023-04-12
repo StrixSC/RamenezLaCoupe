@@ -52,7 +52,7 @@
 
         // Generate graph:
         const g = d3
-            .select(".graph")
+            .select(".graph-viz1")
             .select("svg")
             .append("g")
             .attr("id", "graph-g")
@@ -70,7 +70,7 @@
 
         function setSizing() {
             bounds = (
-                d3.select(".graph").node() as any
+                d3.select(".graph-viz1").node() as any
             ).getBoundingClientRect();
 
             svgSize = {
@@ -346,7 +346,7 @@
 
         <svg class="legeng-svg" />
     </div>
-    <div class="graph" id="game-summary-chart">
+    <div class="graph-viz1" id="game-summary-chart">
         <svg class="main-svg">
             <pattern
                 id="diagonalHatchExGF"
@@ -409,7 +409,7 @@
         align-items: center;
     }
 
-    .graph {
+    :global(.graph-viz1) {
         flex: 3;
         display: flex;
         justify-content: center;

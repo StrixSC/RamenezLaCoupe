@@ -2,7 +2,6 @@
   
   import * as d3 from "d3";
   import { onMount } from 'svelte'
-  import type { Dimensions } from "../models/dimensions";
 
   export let datafile: string;
 
@@ -14,7 +13,7 @@
         left: 50,
         right: 30,
         bottom: 10,
-    } as Dimensions;
+    }
 
   const width = 1000 - margins.left - margins.right;
   const height = 900 - margins.top - margins.bottom;

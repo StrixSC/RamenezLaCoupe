@@ -7,25 +7,20 @@
 </script>
 
 <div>
-    <iframe title="viz1" src="/viz1"></iframe>
+    <Viz1 />
 </div>
 <div>
-    <iframe title="viz2" src="/viz2"></iframe>
+    <Viz2 />
+</div>
+<div class="viz3-container">
+    <Viz3 />
 </div>
 <div>
-    <iframe title="viz3" src="/viz3"></iframe>
+    <Viz4 />
 </div>
 <div>
-    <iframe title="viz4" src="/viz4"></iframe>
-</div>
-<div>
-    <iframe title="viz5" src="/viz5"></iframe>
+    <!-- <Viz5 datafile=""/> -->
 </div>
 
 <style>
-    iframe {
-        width: 100vw;
-        border: none;
-        height: 100vh;
-    }
 </style>
