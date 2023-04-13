@@ -26,7 +26,7 @@
         });
 
         // update graphic based on step here
-        const stepData = parseFloat(response.element.getAttribute('data-step'));
+        const stepData = parseFloat(response.element.getAttribute('data-step-viz4'));
         switch(stepData) {
           case 1:
             currentAxis = chartAxis[0];
@@ -43,14 +43,14 @@
   //////////////////////// Set-Up ////////////////////////////// 
   ////////////////////////////////////////////////////////////// 
   onMount(async () => {
-    container = d3.select("#scroll");
-        graphic = container.select(".scroll__graphic");
-        chart = graphic.select(".chart");
-        text = container.select(".scroll__text");
-        step = text.selectAll(".step");
+    container = d3.select("#scroll-viz4");
+        graphic = container.select(".scroll__graphic-viz4");
+        chart = graphic.select(".chart-viz4");
+        text = container.select(".scroll__text-viz4");
+        step = text.selectAll(".step-viz4");
         scroller = scrollama();
         scroller.setup({
-            step: ".scroll__text .step", // the step elements
+            step: ".scroll__text-viz4 .step-viz4", // the step elements
             offset: 0.6, // set the trigger to be 1/2 way down screen
             debug: false, // display the trigger offset for testing
         })
@@ -151,7 +151,7 @@
       color: color
     };
     
-    RadarChart(".radarChart", data, radarChartOptions);
+    RadarChart(".radarChart-viz4", data, radarChartOptions);
   }
 
     var cfg = {
@@ -465,7 +465,7 @@
 
   function buildLegend() {
     // select the svg area
-    var svg = d3.select("#radarLegend")
+    var svg = d3.select("#radarLegend-viz4")
       .data(data)
       .append("svg")
       .attr("width", 275)
@@ -527,40 +527,36 @@
 
 </script>
 
-<div class="container" id="scroll">
-  <div class="scroll__graphic radarContainer">
-    <div class="radarChart"></div>
+<div class="container-viz4" id="scroll-viz4">
+  <div class="scroll__graphic-viz4 radarContainer-viz4">
+    <div class="radarChart-viz4"></div>
   </div>
-  <div class="scroll__text">
-    <div class="step" data-step="1">
+  <div class="scroll__text-viz4">
+    <div class="step-viz4" data-step-viz4="1">
         <h1>Offensive</h1>
         <p>
           Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
         </p>
-        <div id="radarLegend"></div>
+        <div id="radarLegend-viz4"></div>
     </div>
-    <div class="step" data-step="2">
+    <div class="step-viz4" data-step-viz4="2">
       <h1>Defensive</h1>
       <p>
         Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
       </p>
-      <div id="radarLegend"></div>
+      <div id="radarLegend-viz4"></div>
     </div>
-    <div class="step" data-step="3">
+    <div class="step-viz4" data-step-viz4="3">
         <h1>Step 3</h1>
     </div>
-    <div class="step" data-step="4">
+    <div class="step-viz4" data-step-viz4="4">
         <h1>Step 4</h1>
     </div>
   </div>
 </div>
 
 <style>
-    * {
-      font-family: Georgia, "Times New Roman", Times, serif !important;
-    }
-
-  .radarContainer {
+  .radarContainer-viz4 {
     display: flex;
     justify-content: center;
     align-items: center;

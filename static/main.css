@@ -1,53 +1,65 @@
-
 * {
     font-family: Georgia, "Times New Roman", Times, serif !important;
     margin: 0;
     padding: 0;
 }
 
-
 .hoverable-element:hover {
     cursor: pointer;
     text-decoration: underline;
 }
 
-#scroll, #scroll-viz3 {
+#scroll,
+#scroll-viz3,
+#scroll-viz4 {
     width: 100%;
     display: flex;
 }
 
-.scroll__graphic, .scroll__graphic-viz3 {
-    position: -webkit-sticky; 
+.scroll__graphic,
+.scroll__graphic-viz3,
+.scroll__graphic-viz4 {
+    position: -webkit-sticky;
     order: 2;
     top: 0;
     transform: translateY(0);
     width: 100%;
     position: sticky;
-    flex:3;
+    flex: 3;
     align-self: flex-start;
 }
 
-.scroll__text, .scroll__text-viz3 {
+.scroll__text,
+.scroll__text-viz3,
+.scroll__text-viz4 {
     order: 1;
     padding-top: 1rem;
     padding-left: 1rem;
     flex: 1;
 }
 
-.step, .step-viz3 {
+.step,
+.step-viz3,
+.step-viz4 {
     opacity: 0;
     border: 1px solid palevioletred;
     padding: 1rem;
     height: 100vh;
 }
 
-.step.is-active,.step-viz3.is-active {
+.step.is-active,
+.step-viz3.is-active,
+.step-viz4.is-active {
     opacity: 1;
 }
-.scroll__graphic.is-fixed,.scroll__graphic-viz3.is-fixed {
+.scroll__graphic.is-fixed,
+.scroll__graphic-viz3.is-fixed,
+.scroll__graphic-viz4.is-fixed {
     position: fixed;
 }
-.scroll__graphic.is-bottom,.scroll__graphic-viz3.is-bottom {
+.scroll__graphic.is-bottom,
+.scroll__graphic-viz3.is-bottom,
+.scroll__graphic-viz4.is-bottom {
     bottom: 0;
     top: auto;
 }
