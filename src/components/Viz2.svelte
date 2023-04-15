@@ -120,15 +120,16 @@
         .attr("patternUnits", "userSpaceOnUse")
         .attr("width", 10)
         .attr("height", 10)
+        .attr("patternTransform","rotate(-45)")
 
         // diagonal lines from left to right
         pattern.append("line")
         .attr("x1", 0)
-        .attr("y1", 0)
+        .attr("y1", 5)
         .attr("x2", 10)
-        .attr("y2", 10)
+        .attr("y2", 5)
         .attr("stroke", "red")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 3);
         
         // add the rectangle to the graph and flip it 180 degree around the y axis
         svg.append("rect")
@@ -149,7 +150,7 @@
                     topRectHeight / 2
                 )})`
             )
-            .style("fill", "url(#diagonalPattern)")
+            .style("fill", "url(#diagonalPattern)");
 
         const downRectY = yScale(downRect.y);
 
@@ -166,7 +167,6 @@
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
-            .style("fill", "url(#diagonalPattern)")
             .attr(
                 "transform",
                 `translate(${topRectX}, ${
@@ -175,7 +175,9 @@
                     downRectY +
                     downRectHeight / 2
                 )})`
-            );
+            )
+            .style("fill", "url(#diagonalPattern)");
+
     }
 
     function drawRightRectangle(margin, yScale, xScale1, rectangle, svg) {
@@ -215,19 +217,20 @@
         // create the diagonal pattern
         const pattern = svg.append("defs")
         .append("pattern")
-        .attr("id", "diagonalPattern")
+        .attr("id", "diagonalPattern2")
         .attr("patternUnits", "userSpaceOnUse")
         .attr("width", 10)
         .attr("height", 10)
+        .attr("patternTransform","rotate(45)")
 
         // diagonal lines from left to right
         pattern.append("line")
         .attr("x1", 0)
-        .attr("y1", 0)
+        .attr("y1", 5)
         .attr("x2", 10)
-        .attr("y2", 10)
+        .attr("y2", 5)
         .attr("stroke", "red")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 3);
 
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
@@ -240,7 +243,7 @@
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
-            .style("fill", "url(#diagonalPattern)");
+            .style("fill", "url(#diagonalPattern2)");
 
         const downRectY = yScale(downRect.y);
 
@@ -257,7 +260,7 @@
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
-            .style("fill", "url(#diagonalPattern)");
+            .style("fill", "url(#diagonalPattern2)");
     }
 
     onMount(async () => {
