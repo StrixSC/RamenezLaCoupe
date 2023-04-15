@@ -93,10 +93,19 @@
             let maxG = getMaxGoals(_data);
             console.log(maxG);
 
-            const xScale = d3
+            const xScaleF = d3
                 .scaleLinear()
-                .domain([-maxG, maxG])
-                .range([0, graphSize.width]);
+                .domain([0, maxG])
+                .range([graphSize.width/2, 0]);
+
+            const xAxisF = d3.axisBottom(xScaleF).ticks(10);
+
+            const xScaleA = d3
+                .scaleLinear()
+                .domain([0, maxG])
+                .range([graphSize.width/2, graphSize.width]);
+            
+            const xAxisA = d3.axisBottom(xScaleA).ticks(10);
 
             const widthScale = d3
                 .scaleLinear()
@@ -112,6 +121,17 @@
                 .range([0, graphSize.height])
                 .padding(0.1);
 
+            const svg = d3.select("#game-summary-chart")
+                .select("svg")
+            
+            svg.append("g")
+                .attr("transform", "translate(" + margins.left + "," + (svgSize.height - margins.bottom) + ")")
+                .call(xAxisF)
+
+            svg.append("g")
+                .attr("transform", "translate(" + margins.left  + "," + (svgSize.height - margins.bottom) + ")")
+                .call(xAxisA)
+            
             // Title
             d3.select(".title")
                 .attr("class", "title")
@@ -123,9 +143,6 @@
                 .text("Goals Scored");
 
             //X-AXIS
-            d3.select(".x.axis")
-                .attr("transform", "translate(0," + graphSize.height + ")")
-                .call((d3.axisBottom(xScale) as any).ticks(10));
 
             // Add goals for bars
             var gf = d3.select("#graph-g")
@@ -142,10 +159,10 @@
 				gf.transition()
 					.duration(1000)
 					.attr("width", (d) => widthScale(d.GF))
-					.attr("x", (d) => xScale(-d.GF))
+					.attr("x", (d) => xScaleF(d.GF))
 			} else {
 				gf.attr("width", (d) => widthScale(d.GF))
-					.attr("x", (d) => xScale(-d.GF))
+					.attr("x", (d) => xScaleF(d.GF))
 			}
 
             // add xG for bars
@@ -163,10 +180,10 @@
 				xgf.transition()
 					.duration(1000)
 					.attr("width", (d) => widthScale(d.xGF))
-					.attr("x", (d) => xScale(-d.xGF));
+					.attr("x", (d) => xScaleF(d.xGF));
 			} else {
 				xgf.attr("width", (d) => widthScale(d.xGF))
-					.attr("x", (d) => xScale(-d.xGF));
+					.attr("x", (d) => xScaleF(d.xGF));
 			}
 			
 
@@ -177,7 +194,7 @@
                 .data(_data)
                 .join("rect")
                 .attr("class", "goals-against")
-                .attr("x", (d) => xScale(0))
+                .attr("x", (d) => xScaleA(0))
                 .attr("y", (d) => yScale(d.opponent)!)
                 .attr("height", barHeight)
                 .attr("fill", "#fc8787");
@@ -196,7 +213,7 @@
                 .data(_data)
                 .join("rect")
                 .attr("class", "xG-against")
-                .attr("x", (d) => xScale(0))
+                .attr("x", (d) => xScaleA(0))
                 .attr("y", (d) => yScale(d.opponent)!)
                 .attr("height", barHeight)
                 .attr("fill", "url(#diagonalHatchExGA)");
@@ -209,7 +226,30 @@
 				xga.attr("width", (d) => widthScale(d.xGA));
 			}
 
+            // Add line in the middle of the graph with animation
+            var midLine = d3.select("#graph-g")
+                .selectAll(".middle-line")
+                .data([0])
+                .join("line")
+                .attr("class", "middle-line")
+                .attr("x1", graphSize.width / 2)
+                .attr("y1", graphSize.height)
+                .attr("x2", graphSize.width / 2)
+                .attr("y2", graphSize.height)
+                .attr("stroke", "#000")
+                .attr("stroke-width", 1)
+                .attr("stroke-dasharray", "5,5")
+                .attr("stroke-opacity", 0.5);
 
+            if (anime) {
+                midLine
+                    .transition()
+                    .duration(1000)
+                    .attr("y2", 0)
+            } else {
+                midLine
+                    .attr("y2", 0)
+            }
             // Add opponent names on the right side with goals for under
             d3.select("#graph-g")
                 .selectAll(".opponent")
