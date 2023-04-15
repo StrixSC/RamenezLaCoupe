@@ -16,22 +16,22 @@
     const legendData = [
         {
             fill: "#81BDFC",
-            label: "Goals For",
+            label: "Goals For France",
             fontweight: "bold",
         },
         {
             fill: "#fc8787",
-            label: "Goals Against",
+            label: "Goals Against France",
             fontweight: "bold",
         },
         {
             fill: "url(#diagonalHatchExGF)",
-            label: "(Expected Goals For)",
+            label: "(Expected Goals For France)",
             fontweight: "normal",
         },
         {
             fill: "url(#diagonalHatchExGA)",
-            label: "(Expected Goals Against)",
+            label: "(Expected Goals Against France)",
             fontweight: "normal",
         },
     ];
@@ -75,7 +75,7 @@
 
             svgSize = {
                 width: bounds.width,
-                height: 600,
+                height: 900,
             };
 
             graphSize = {
@@ -333,16 +333,34 @@
 
 <div class="container">
     <div class="text">
-        <h1>Proident do excepteur dolor anim ullamco labore.</h1>
+        <h1>Goals and Expected Goals For and Against France</h1>
+        <br>
+        <br>
         <p>
-            Excepteur proident sunt occaecat ex occaecat mollit occaecat irure
-            duis magna. Pariatur anim excepteur aliqua est. Excepteur laborum
-            proident minim eiusmod. Culpa consequat ea reprehenderit minim.
-            Labore pariatur est est Lorem laborum veniam adipisicing incididunt
-            ea nisi amet non. Eiusmod ea nulla aliquip tempor nisi reprehenderit
-            quis veniam. Do voluptate pariatur fugiat quis et et enim do ut
-            occaecat ex quis.
+            In this bar chart, we show, for every game played by France in the 2022 World Cup, 
+            the goals and expected goals for and against France.
         </p>
+        <br>
+        <p>
+            Expected goals is a metric designed to measure the probability of a shot resulting in a goal.
+            Based on multiple informations such as ; historical data, position of shoter, distance from the goal,
+            position of goal keeper and more, the expected goal is an estimation of the likelihood of a goal on a scale between 0 and 1. 
+        </p>
+        <br> 
+        <p>For example, a player shoting 1 meter away from the goal while the goalkeeper is laying on the ground 
+            could have an expected goal of 0.9, meaning that there is a 90% chance of scoring a goal. On the other hand,
+            a player shoting 30 meters away from the goal while the goalkeeper is up and facing the shot could have an expected goal of 0.1,
+            meaning that there is a 10% chance of scoring a goal.
+        </p>
+        <br>
+        <p>
+            Expected Goals is a good measure to help determine how lucky or unlucky a team is. Indeed, if a team has a lot of goals scored
+            but a low expected goals, it could mean that the team was lucky and they scored more than they should have. On the other hand, if a team has not a lot of goals scored
+            but a high expected goals, it could mean that the team was unlucky or unable to finish. 
+        </p>
+
+        <br>
+        <br>
 
         <svg class="legeng-svg" />
     </div>
