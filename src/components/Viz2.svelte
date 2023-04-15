@@ -84,7 +84,7 @@
             .attr("y", rectY)
             .attr("width", rectWidth)
             .attr("height", rectHeight)
-            .style("fill", "red")
+            .style("fill", "blue")
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
@@ -128,7 +128,7 @@
         .attr("y1", 5)
         .attr("x2", 10)
         .attr("y2", 5)
-        .attr("stroke", "red")
+        .attr("stroke", "blue")
         .attr("stroke-width", 3);
         
         // add the rectangle to the graph and flip it 180 degree around the y axis
@@ -137,7 +137,7 @@
             .attr("y", topRectY)
             .attr("width", topRectWidth)
             .attr("height", topRectHeight)
-            .style("fill", "red")
+            .style("fill", "blue")
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
