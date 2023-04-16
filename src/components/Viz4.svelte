@@ -138,9 +138,11 @@
     var svg = d3
       .select(id.toString())
       .append("svg")
+      .attr("class", "viz4-svg-container")
       .attr("width", cfg.w + cfg.margin.left + cfg.margin.right)
       .attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
       .attr("class", "radar" + id);
+
     //Append a g element
     var g = svg
       .append("g")
@@ -216,7 +218,7 @@
         return rScale(maxValue * 1.1) * Math.sin(angleSlice * i - Math.PI / 2);
       })
       .attr("class", "line")
-      .style("stroke", "white")
+      .style("stroke", "rgb(211 211 211)")
       .style("stroke-width", "2px");
 
     //Append the labels at each axis
@@ -459,45 +461,65 @@
 </script>
 
 
+<div class="viz4-information-container">
+  <h1>Visualization of Top Player Performances: Comparing France's Best Players to Opposing Teams' Best Player</h1>
+  <br /><br />
+  <p>
+    Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
+  </p>
+</div>
 <div class="radarContainer-viz4">
   <div id="radarLegend-viz4">   
-      <div>
-        <h1>Visualization of Top Player Performances: Comparing France's Best Players to Opposing Teams' Best Player</h1>
-        <br /><br />
-        <p>
-          Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
-        </p>
-  </div>
   </div>
   <div class="radarChart-viz4"></div>
 </div>
 
 <style>
   .radarContainer-viz4 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
     gap: 1rem;
+    display: flex;
+    position: relative;
   }
 
   .radarChart-viz4 {
     display: flex;
-    flex: 3;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex: 8;
+    position: relative;
+    z-index: 0;
+    margin-top: 2rem;
   }
+
+  :global(.radar.radarChart-viz4) {
+      background: white !important;
+    }
   
   #radarLegend-viz4 {
     display: flex;
-    flex: 2;
+    flex: 1;
     flex-direction: column;
-    padding: 1.5rem;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    background-color: white;
+    position: absolute;
+    z-index: 1;
   }
-
+  
+  .viz4-information-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 0.5em;
+    padding-bottom: 1rem;
+    width: 85%;
+    margin: auto;
+  }
+  :global(svg.radar\.radarChart-viz4) {
+        background: white !important;
+        border-radius: 1rem;
+        padding: 1rem;
+    }
 </style>
 

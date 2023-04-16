@@ -474,7 +474,5 @@
     :global(.graph-viz1) {
         flex: 3;
         display: flex;
-        justify-content: center;
-        align-items: center;
     }
 </style>

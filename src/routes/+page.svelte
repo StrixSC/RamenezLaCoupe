@@ -17,6 +17,7 @@
         <a href="#viz5-a"><li class="nav-list-item">Comparision of France’s performance compared to the other countries in the World Cup 2022</li></a>
     </div>
 </div>
+<div class="main-viz-container">
 <div id="viz1-a" class="viz1-container">
     <Viz1 />
 </div>
@@ -32,6 +33,7 @@
 </div>
 <div id="viz5-a" class="viz5-container">
     <Viz5 />
+</div>
 </div>
 
 <style>
@@ -73,6 +75,11 @@
         background: lightcoral;
     }
 
+    .main-viz-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
     .nav {
         height: 100vh;
         display: flex;
@@ -115,7 +122,7 @@
     }
     
     .viz1-container {
-        height: 100vh;
+        min-height: 100vh;
     }
 
     .viz2-container {
@@ -126,7 +133,7 @@
     }
 
     .viz4-container {
-        height: 100vh;
+        min-height: 100vh;
     }
 
     .viz5-container {
