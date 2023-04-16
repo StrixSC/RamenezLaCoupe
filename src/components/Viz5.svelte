@@ -164,14 +164,21 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr("fill", "darkgreen");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-poss`).attr("opacity", 1);
                     d3.select(`.${data.team}-poss-text`)
-                        .attr("opacity", 1)
-                        .text(data.Squad.split(' ')[1]);
+                    .attr("opacity", 1)
+                    .text(data.Squad.split(' ')[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
+
                     d3.select(this).attr(
                         "fill",
                         data.team === "fr" ? "darkblue" : "lightblue"
@@ -220,7 +227,7 @@
                     return -20;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
@@ -229,7 +236,7 @@
                 })
                 .attr("transform", (d: any) => {
                     if (d.team === "fr") {
-                        return `translate(-30, 30) rotate(-45,${xScalePoss(
+                        return `translate(-30, 40) rotate(-45,${xScalePoss(
                             d.Poss
                         )},75)`;
                     } else return "";
@@ -276,14 +283,20 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr("fill", "darkgreen");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-assists`).attr("opacity", 1);
                     d3.select(`.${data.team}-assists-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(' ')[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
                         data.team === "fr" ? "darkblue" : "lightblue"
@@ -332,7 +345,7 @@
                     return 175;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
@@ -341,7 +354,7 @@
                 })
                 .attr("transform", (d: any) =>{
                   if (d.team === "fr") {
-                    return `translate(-225, 40) rotate(-45,${xScaleAssists(d.Ast)},75)`;
+                    return `translate(-225, 50) rotate(-45,${xScaleAssists(d.Ast)},75)`;
                   } else return "";
                 })
                 .attr('font-weight', 'lighter')
@@ -387,14 +400,20 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr("fill", "darkgreen");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd`).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(' ')[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
                         data.team === "fr" ? "darkblue" : "lightblue"
@@ -443,7 +462,7 @@
                     return 375;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
@@ -452,7 +471,7 @@
                 })
                 .attr("transform", (d: any) =>{
                   if (d.team === "fr") {
-                    return `translate(-365, 95) rotate(-45,${xScaleYellowCrd(d.CrdY)},75)`;
+                    return `translate(-365, 105) rotate(-45,${xScaleYellowCrd(d.CrdY)},75)`;
                   } else return "";
                 })
                 .attr('font-weight', 'lighter')
@@ -497,14 +516,20 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr("fill", "darkgreen");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG`).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(' ')[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === 'fr') {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
                         data.team === "fr" ? "darkblue" : "lightblue"
@@ -553,7 +578,7 @@
                     return 575;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
@@ -562,7 +587,7 @@
                 })
                 .attr("transform", (d: any) =>{
                   if (d.team === "fr") {
-                    return `translate(-507, 155) rotate(-45,${xScaleGExRatio(d.goalsToExGRatio)},75)`;
+                    return `translate(-507, 165) rotate(-45,${xScaleGExRatio(d.goalsToExGRatio)},75)`;
                   } else return "";
                 })
                 .attr('font-weight', 'lighter')
