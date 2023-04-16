@@ -70,12 +70,6 @@
             let possessionChart = svg
                 .append("g")
                 .attr("class", "possession-viz5")
-                // .append("text")
-                // .attr("class", "possession-title")
-                // .attr('font-weight', 'heavier')
-                // .attr("transform", `translate(-100, 30)`)
-                // .attr('margin', "100")
-                // .text("Possession")
                 .append("rect")
                 .attr("class", "viz5-possession")
                 .attr("width", 600)
@@ -628,6 +622,12 @@
         non minim cillum aute sit est id Lorem. Dolore do consectetur labore amet
         pariatur anim ex. Veniam culpa culpa adipisicing qui dolor anim est qui ad.
     </div>
+    <div>
+      <div id="possession-title">Possession</div>
+      <div id="assists-title">Assists</div>
+      <div id="yellCrds-title">Yellow Cards</div>
+      <div id="gToExG-title">Goals to Expected Goals Ratio</div>
+    </div>
     <div id="viz5" />
 </div>
 
@@ -641,8 +641,6 @@
     #viz5 {
         flex: 3;
         display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     #description {
@@ -650,5 +648,25 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+    }
+
+    #possession-title {
+      transform: translate(14vw, 8vh);
+      max-width: 0px;
+
+    }
+
+    #assists-title {
+      transform: translate(14vw, 33vh);
+      max-width: 0px;
+    }
+
+    #yellCrds-title {
+      transform: translate(14vw, 55vh);
+      max-width: 0px;
+    }
+
+    #gToExG-title {
+      transform: translate(4vw, 78vh);
     }
 </style>
