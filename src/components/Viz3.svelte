@@ -53,6 +53,19 @@
         "#69cccf",
         "#70ff6b",
     ];
+    
+    const getAndParseData = (src: string) => {
+        d3.csv(src)
+                .then((data) => {
+                    const [columns, __data] = transformData(data);
+                    _columns.push(columns);
+                    _data.push(__data);
+                })
+                .catch((e) => {
+                    console.error(e);
+                    _data.push([]);
+                });
+    }
 
     onMount(async () => {
         container = d3.select("#scroll-viz3");
@@ -68,32 +81,16 @@
 
 
         Promise.all([
-            d3
-                .csv("/data/PlayerStats/France/Offensive_1.csv")
-                .then((data) => {
-                    const [columns, __data] = transformData(data);
-                    _columns.push(columns);
-                    _data.push(__data);
-                })
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
-            d3
-                .csv("/data/PlayerStats/France/Offensive_2.csv")
-                .then((data) => {
-                    const [columns, __data] = transformData(data);
-                    _columns.push(columns);
-                    _data.push(__data);
-                })
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
+            getAndParseData("/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
+            getAndParseData("/data/PlayerStats/France/Offensive_2_Kicks.csv"),
+            getAndParseData("/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_1_Tackles.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_2_Blocks.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_3_Challenges.csv"),
+            getAndParseData("/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
         ]).then(() => {
             setSizing();
             build();
-            buildLegend();
         });
 
         // Generate graph:
@@ -112,7 +109,6 @@
 
         setSizing();
         build();
-
         
         window.addEventListener("resize", () => {
             setSizing();
@@ -141,11 +137,11 @@
                 .attr("height", svgSize.height);
         }
 
-        function buildLegend() {
-            
-        }
-
         function build() {
+            if (_data.length <= 0) {
+                return;
+            }
+
             const groups = getDataGroups(_data[currentStep]);
             const subgroups = getDataSubgroups(_data[currentStep]);
             const xScale = d3
@@ -245,7 +241,7 @@
                 .data(() => subgroups)
                 .enter()
                 .append("rect")
-                    .attr("x", 100)
+                    .attr("x", margins.left)
                     .attr("y", (_, i: number) => 100 + i*(size+5)) // 100 is where the first dot appears. 25 is the distance between dots
                     .attr("width", size)
                     .attr("height", size)
@@ -255,7 +251,7 @@
                 .data(_columns[currentStep])
                 .enter()
                 .append("text")
-                .attr("x", 100 + size*1.2)
+                .attr("x", margins.left + size*1.2)
                 .attr("y", (_, i: number) => 100 + i*(size+5) + (size/2)) // 100 is where the first dot appears. 25 is the distance between dots
                 .text((d: string) => d)
                 .attr("text-anchor", "left")
@@ -302,5 +298,7 @@
 
     .graph-viz3 {
         width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 </style>
