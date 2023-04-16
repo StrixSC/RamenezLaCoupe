@@ -3,5 +3,5 @@
 </script>
 
 <main>
-    <Viz5 datafile="/src/data/OverallStats/TeamOverallStats.csv"></Viz5>
+    <Viz5></Viz5>
 </main>

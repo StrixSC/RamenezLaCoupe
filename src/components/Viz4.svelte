@@ -57,20 +57,7 @@
         .onStepEnter(handleStepEnter);
 
     Promise.all([
-            d3
-                .csv("/data/PlayerStats/France/Offensive_1.csv")
-                .then((data) => _data.push(transformData(data)))
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
-            d3
-                .csv("/data/PlayerStats/France/Offensive_2.csv")
-                .then((data) => _data.push(transformData(data)))
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
+
         ]).then(() => {
             current = _data[0];
         });

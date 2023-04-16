@@ -12,7 +12,6 @@
     import type { PlayerData } from "src/models/france-player-data";
 
     let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-    let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
     let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
     let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
     let scroller: scrollama.ScrollamaInstance;
@@ -30,11 +29,16 @@
 
         // update graphic based on step here
         const stepData = parseFloat(response.element.getAttribute('data-step-viz3'));
-        console.log(stepData);
+        currentStep = stepData - 1;
+        if (currentStep >= _data.length) {
+            currentStep = 0;
+        }
+        build();
     };
 
     let _data: PlayerData[][] = [];
-    let current: PlayerData[] = [];
+    let _columns: string[][] = [];
+    let currentStep = 0;
     const margins = { top: 80, right: 0, bottom: 80, left: 55 };
 
     const X_PADDING = 0.15;
@@ -49,10 +53,22 @@
         "#69cccf",
         "#70ff6b",
     ];
+    
+    const getAndParseData = (src: string) => {
+        d3.csv(src)
+                .then((data) => {
+                    const [columns, __data] = transformData(data);
+                    _columns.push(columns);
+                    _data.push(__data);
+                })
+                .catch((e) => {
+                    console.error(e);
+                    _data.push([]);
+                });
+    }
 
     onMount(async () => {
         container = d3.select("#scroll-viz3");
-        graphic = container.select(".scroll__graphic-viz3");
         text = container.select(".scroll__text-viz3");
         step = text.selectAll(".step-viz3");
         scroller = scrollama();
@@ -65,23 +81,15 @@
 
 
         Promise.all([
-            d3
-                .csv("/data/PlayerStats/France/Offensive_1.csv")
-                .then((data) => _data.push(transformData(data)))
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
-            d3
-                .csv("/data/PlayerStats/France/Offensive_2.csv")
-                .then((data) => _data.push(transformData(data)))
-                .catch((e) => {
-                    console.error(e);
-                    _data.push([]);
-                }),
-        ]).then((value) => {
-            console.log(value);
-            current = _data[0];
+            getAndParseData("/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
+            getAndParseData("/data/PlayerStats/France/Offensive_2_Kicks.csv"),
+            getAndParseData("/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_1_Tackles.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_2_Blocks.csv"),
+            getAndParseData("/data/PlayerStats/France/Defensive_3_Challenges.csv"),
+            getAndParseData("/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
+            getAndParseData("/data/PlayerStats/France/Possession_1_Controls.csv"),
+        ]).then(() => {
             setSizing();
             build();
         });
@@ -102,8 +110,14 @@
 
         setSizing();
         build();
+        
+        window.addEventListener("resize", () => {
+            setSizing();
+            build();
+        });
+    });
 
-        function setSizing() {
+    function setSizing() {
             bounds = (
                 d3.select(".graph-viz3").node() as any
             ).getBoundingClientRect();
@@ -125,9 +139,12 @@
         }
 
         function build() {
-            console.log(_data);
-            const groups = getDataGroups(current);
-            const subgroups = getDataSubgroups(current);
+            if (_data.length <= 0) {
+                return;
+            }
+
+            const groups = getDataGroups(_data[currentStep]);
+            const subgroups = getDataSubgroups(_data[currentStep]);
             const xScale = d3
                 .scaleBand()
                 .rangeRound([0, graphSize.width])
@@ -141,7 +158,7 @@
             const yScale = d3
                 .scaleLinear()
                 .rangeRound([graphSize.height, 0])
-                .domain([0, getLargestValue(current)]);
+                .domain([0, getLargestValue(_data[currentStep])]);
             const colorScale = d3
                 .scaleOrdinal()
                 .range(colors)
@@ -169,7 +186,7 @@
             // Groups:
             d3.select("#graph-g-viz3")
                 .selectAll(".group")
-                .data(current)
+                .data(_data[currentStep])
                 .join("g")
                 .attr("class", "group")
                 .attr(
@@ -215,44 +232,82 @@
                     (d: PlayerData) => graphSize.height - yScale(d.value)
                 )
                 .attr("y", (d: PlayerData) => yScale(d.value));
+            
+            // Legend
+
+            const svg = d3.select('.legend-viz3').attr('height', _columns[currentStep].length * 100).attr('width', graphSize.width);
+            var size = 20;
+            svg.selectChildren().remove();
+            svg.selectAll("dots-viz3")
+                .data(() => subgroups)
+                .enter()
+                .append("rect")
+                    .attr("x", margins.left)
+                    .attr("y", (_, i: number) => 100 + i*(size+5)) // 100 is where the first dot appears. 25 is the distance between dots
+                    .attr("width", size)
+                    .attr("height", size)
+                    .style("fill", (d: string) => colorScale(d) as string );
+            
+            svg.selectAll("labels-viz3")
+                .data(_columns[currentStep])
+                .enter()
+                .append("text")
+                .attr("x", margins.left + size*1.2)
+                .attr("y", (_, i: number) => 100 + i*(size+5) + (size/2)) // 100 is where the first dot appears. 25 is the distance between dots
+                .text((d: string) => d)
+                .attr("text-anchor", "left")
+                .style("alignment-baseline", "middle")
         }
 
-        window.addEventListener("resize", () => {
-            setSizing();
-            build();
-        });
-    });
 </script>
 
 <main>
 <div class="container-viz3" id="scroll-viz3">
     <div class="scroll__graphic-viz3 graph-viz3" id="bar-chart-viz3">
             <svg class="main-svg" />
+            <svg class="legend-viz3" />
     </div>
     <div class="scroll__text-viz3">
         <div class="step-viz3" data-step-viz3="1">
-            <h1>Step 1</h1>
+            <h1>Offensive: Goals and Shots</h1>
+            <br>
+            <p>Eiusmod qui laborum est anim veniam cillum aute duis veniam magna elit est aliquip. Esse in esse pariatur anim excepteur eu exercitation do. Reprehenderit ullamco et Lorem velit. Irure reprehenderit amet non do incididunt. Lorem ex nisi cupidatat aliquip mollit nulla deserunt magna elit fugiat esse quis reprehenderit eiusmod. Sit consectetur ad eiusmod exercitation laboris velit ex nisi irure veniam officia reprehenderit. Non anim aute cupidatat duis tempor enim cupidatat.</p>
         </div>
         <div class="step-viz3" data-step-viz3="2">
-            <h1>Anim anim nulla aliqua consectetur exercitation voluptate sint aliquip.</h1>
+            <h1>Offensive: Kicks</h1>
             <p>
                 Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
             </p>
         </div>
         <div class="step-viz3" data-step-viz3="3">
-            <h1>Step 3</h1>
+            <h1>Offensive: Goals and Expected Goals</h1>
+            <br>
+            <p>Est veniam consectetur elit officia enim culpa qui mollit veniam eiusmod. Commodo dolor excepteur ipsum in ea anim. Adipisicing nulla anim non nisi pariatur magna dolor incididunt ullamco nulla enim aliqua aliquip. Irure fugiat mollit adipisicing consequat eiusmod. Qui elit laboris dolor fugiat ipsum consectetur officia veniam. Est reprehenderit nulla est id enim commodo aliqua ipsum voluptate aliqua exercitation. Qui dolore sunt sunt sunt do eu elit.</p>
         </div>
         <div class="step-viz3" data-step-viz3="4">
-            <h1>Step 4</h1>
+            <h1>Defensive: Tackles</h1>
+            <br>
+            <p>Cillum fugiat laboris Lorem sit anim eu cillum culpa enim veniam. Culpa officia nisi fugiat duis sit enim. Dolore aliqua cupidatat do ipsum velit sint aute cillum ut. Amet eu eiusmod cillum duis excepteur commodo sit ex ea Lorem ea.</p>
         </div>
         <div class="step-viz3" data-step-viz3="5">
-            <h1>Step 5</h1>
+            <h1>Defensive: Blocks</h1>
+            <br>
+            <p>Eu ad dolore eu proident sunt magna non consectetur excepteur est. Consectetur ea anim anim enim anim ex esse. Ullamco id reprehenderit eu id culpa ad fugiat officia est. Tempor proident laboris ipsum ut qui enim excepteur. Eiusmod ullamco commodo exercitation sit dolore ex sit anim cillum deserunt. Aliquip tempor nostrud et aliqua quis minim.</p>
         </div>
         <div class="step-viz3" data-step-viz3="6">
-            <h1>Step 6</h1>
+            <h1>Defensive: Challenges</h1>
+            <br>
+            <p>In voluptate mollit adipisicing mollit ex. Esse ullamco ipsum velit labore non fugiat non aliqua quis eiusmod consequat. Tempor irure ex occaecat pariatur magna laboris officia velit.</p>
         </div>
         <div class="step-viz3" data-step-viz3="7">
-            <h1>Step 7</h1>
+            <h1>Passing</h1>
+            <br>
+            <p>Eiusmod commodo eu cupidatat nisi ad non proident eiusmod. Aliqua sunt culpa amet velit minim elit Lorem irure pariatur. Duis occaecat enim veniam occaecat ad cupidatat culpa in consequat consectetur aute nulla. Aliquip voluptate incididunt dolor fugiat. Amet anim aute incididunt id sunt culpa nostrud in elit exercitation nisi.</p>
+        </div>
+        <div class="step-viz3" data-step-viz3="8">
+            <h1>Possessions</h1>
+            <br>
+            <p>Cupidatat irure magna aliqua enim excepteur mollit elit ullamco officia veniam elit duis minim. Ex ad magna irure id ullamco aliquip. Cillum non nisi commodo aute et qui amet ipsum adipisicing tempor amet. Commodo esse id minim aliqua eiusmod cillum magna veniam eiusmod id in. Fugiat excepteur ut est Lorem velit voluptate velit deserunt mollit id incididunt adipisicing officia. Ut et adipisicing aute sint minim id et.</p>
         </div>
     </div>
 </div>
@@ -261,5 +316,7 @@
 
     .graph-viz3 {
         width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 </style>
