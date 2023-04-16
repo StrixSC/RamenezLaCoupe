@@ -88,6 +88,7 @@
             getAndParseData("/data/PlayerStats/France/Defensive_2_Blocks.csv"),
             getAndParseData("/data/PlayerStats/France/Defensive_3_Challenges.csv"),
             getAndParseData("/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
+            getAndParseData("/data/PlayerStats/France/Possession_1_Controls.csv"),
         ]).then(() => {
             setSizing();
             build();
@@ -234,7 +235,7 @@
             
             // Legend
 
-            const svg = d3.select('.legend-viz3').attr('height', _columns[currentStep].length * 100).attr('width', 400);
+            const svg = d3.select('.legend-viz3').attr('height', _columns[currentStep].length * 100).attr('width', graphSize.width);
             var size = 20;
             svg.selectChildren().remove();
             svg.selectAll("dots-viz3")
@@ -268,28 +269,45 @@
     </div>
     <div class="scroll__text-viz3">
         <div class="step-viz3" data-step-viz3="1">
-            <h1>Step 1</h1>
+            <h1>Offensive: Goals and Shots</h1>
+            <br>
+            <p>Eiusmod qui laborum est anim veniam cillum aute duis veniam magna elit est aliquip. Esse in esse pariatur anim excepteur eu exercitation do. Reprehenderit ullamco et Lorem velit. Irure reprehenderit amet non do incididunt. Lorem ex nisi cupidatat aliquip mollit nulla deserunt magna elit fugiat esse quis reprehenderit eiusmod. Sit consectetur ad eiusmod exercitation laboris velit ex nisi irure veniam officia reprehenderit. Non anim aute cupidatat duis tempor enim cupidatat.</p>
         </div>
         <div class="step-viz3" data-step-viz3="2">
-            <h1>Anim anim nulla aliqua consectetur exercitation voluptate sint aliquip.</h1>
+            <h1>Offensive: Kicks</h1>
             <p>
                 Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
             </p>
         </div>
         <div class="step-viz3" data-step-viz3="3">
-            <h1>Step 3</h1>
+            <h1>Offensive: Goals and Expected Goals</h1>
+            <br>
+            <p>Est veniam consectetur elit officia enim culpa qui mollit veniam eiusmod. Commodo dolor excepteur ipsum in ea anim. Adipisicing nulla anim non nisi pariatur magna dolor incididunt ullamco nulla enim aliqua aliquip. Irure fugiat mollit adipisicing consequat eiusmod. Qui elit laboris dolor fugiat ipsum consectetur officia veniam. Est reprehenderit nulla est id enim commodo aliqua ipsum voluptate aliqua exercitation. Qui dolore sunt sunt sunt do eu elit.</p>
         </div>
         <div class="step-viz3" data-step-viz3="4">
-            <h1>Step 4</h1>
+            <h1>Defensive: Tackles</h1>
+            <br>
+            <p>Cillum fugiat laboris Lorem sit anim eu cillum culpa enim veniam. Culpa officia nisi fugiat duis sit enim. Dolore aliqua cupidatat do ipsum velit sint aute cillum ut. Amet eu eiusmod cillum duis excepteur commodo sit ex ea Lorem ea.</p>
         </div>
         <div class="step-viz3" data-step-viz3="5">
-            <h1>Step 5</h1>
+            <h1>Defensive: Blocks</h1>
+            <br>
+            <p>Eu ad dolore eu proident sunt magna non consectetur excepteur est. Consectetur ea anim anim enim anim ex esse. Ullamco id reprehenderit eu id culpa ad fugiat officia est. Tempor proident laboris ipsum ut qui enim excepteur. Eiusmod ullamco commodo exercitation sit dolore ex sit anim cillum deserunt. Aliquip tempor nostrud et aliqua quis minim.</p>
         </div>
         <div class="step-viz3" data-step-viz3="6">
-            <h1>Step 6</h1>
+            <h1>Defensive: Challenges</h1>
+            <br>
+            <p>In voluptate mollit adipisicing mollit ex. Esse ullamco ipsum velit labore non fugiat non aliqua quis eiusmod consequat. Tempor irure ex occaecat pariatur magna laboris officia velit.</p>
         </div>
         <div class="step-viz3" data-step-viz3="7">
-            <h1>Step 7</h1>
+            <h1>Passing</h1>
+            <br>
+            <p>Eiusmod commodo eu cupidatat nisi ad non proident eiusmod. Aliqua sunt culpa amet velit minim elit Lorem irure pariatur. Duis occaecat enim veniam occaecat ad cupidatat culpa in consequat consectetur aute nulla. Aliquip voluptate incididunt dolor fugiat. Amet anim aute incididunt id sunt culpa nostrud in elit exercitation nisi.</p>
+        </div>
+        <div class="step-viz3" data-step-viz3="8">
+            <h1>Possessions</h1>
+            <br>
+            <p>Cupidatat irure magna aliqua enim excepteur mollit elit ullamco officia veniam elit duis minim. Ex ad magna irure id ullamco aliquip. Cillum non nisi commodo aute et qui amet ipsum adipisicing tempor amet. Commodo esse id minim aliqua eiusmod cillum magna veniam eiusmod id in. Fugiat excepteur ut est Lorem velit voluptate velit deserunt mollit id incididunt adipisicing officia. Ut et adipisicing aute sint minim id et.</p>
         </div>
     </div>
 </div>

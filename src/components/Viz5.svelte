@@ -162,7 +162,7 @@
                     d3.select(`.${data.team}-poss`).attr("opacity", 1);
                     d3.select(`.${data.team}-poss-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(' ')[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
                     d3.select(this).attr(
@@ -220,20 +220,62 @@
                     }
                     return 0;
                 })
-                .attr("transform", (d: any) =>{
-                  if (d.team === "fr") {
-                    return `translate(-30, 30) rotate(-45,${xScalePoss(d.Poss)},75)`;
-                  } else return "";
+                .attr("transform", (d: any) => {
+                    if (d.team === "fr") {
+                        return `translate(-30, 30) rotate(-45,${xScalePoss(
+                            d.Poss
+                        )},75)`;
+                    } else return "";
                 })
-                .text((d: any) => d.Squad);
+                .attr('font-weight', 'lighter')
+                .text((d: any) => d.Squad.split(' ')[1]);
         });
     });
 </script>
 
 <div class="vizContainer">
-    <div id="description" />
+    <div id="description">
+        <h1>Adipisicing aute irure consequat laborum minim mollit deserunt ad ut magna consequat dolor cupidatat ullamco.</h1>
+        Amet dolor culpa cupidatat exercitation. Lorem nulla ad nisi aute elit
+        laboris reprehenderit. Commodo adipisicing reprehenderit dolor sunt
+        duis. Reprehenderit ex mollit cupidatat sunt labore elit ut voluptate
+        adipisicing magna aliquip. Dolor magna nulla ad anim magna fugiat
+        laborum quis ad.
+        <br /><br />
+        Eiusmod ex duis anim irure. Enim officia in non minim mollit duis consequat.
+        Cillum id culpa eu do magna. Lorem cillum sunt eiusmod amet consequat. Pariatur
+        labore dolore nostrud excepteur ea proident enim duis eiusmod commodo eu
+        mollit. Aliquip incididunt aliqua excepteur commodo ullamco enim nostrud
+        consectetur enim duis commodo eu.
+        <br /><br />
+        Non adipisicing laboris amet esse cillum. Ad nisi sint commodo enim sint
+        adipisicing ipsum. Qui nulla exercitation dolor incididunt minim. Laborum
+        eiusmod cillum non elit magna officia duis irure cupidatat sint enim. Enim
+        non minim cillum aute sit est id Lorem. Dolore do consectetur labore amet
+        pariatur anim ex. Veniam culpa culpa adipisicing qui dolor anim est qui ad.
+    </div>
     <div id="viz5" />
 </div>
 
 <style>
+    .vizContainer {
+        display: flex;
+        padding: 2rem;
+        gap: 1rem;
+    }
+
+    #viz5 {
+        flex: 3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #description {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
 </style>
