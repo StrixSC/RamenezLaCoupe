@@ -405,7 +405,7 @@
         <svg class="legeng-svg" />
     </div>
     <div class="graph-viz1" id="game-summary-chart">
-        <svg class="main-svg">
+        <svg class="viz1-svg main-svg">
             <pattern
                 id="diagonalHatchExGF"
                 width="8"
@@ -444,13 +444,17 @@
 </div>
 
 <style>
-    * {
-        font-family: Georgia, "Times New Roman", Times, serif !important;
-    }
 
     :global(.hoverable-element:hover) {
         cursor: pointer;
         text-decoration: underline;
+    }
+
+    .viz1-svg {
+        margin:1rem;
+        margin-top:2rem;
+        background: white !important;
+        border-radius: 10px;
     }
 
     .container {
@@ -470,7 +474,5 @@
     :global(.graph-viz1) {
         flex: 3;
         display: flex;
-        justify-content: center;
-        align-items: center;
     }
 </style>

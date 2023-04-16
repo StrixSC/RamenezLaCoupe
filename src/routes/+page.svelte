@@ -5,138 +5,41 @@
     import Viz4 from "../components/Viz4.svelte";
     import Viz5 from "../components/Viz5.svelte";
 </script>
-
-<div>
-    <div class="viz-introduction viz1-introduction">
-        <div class="viz-container">
-            <h1 class="viz-introduction-title">
-                Comparision of the teams' expected performances
-            </h1>
-            <p>
-                In cupidatat velit consectetur non aute ut occaecat nisi
-                reprehenderit reprehenderit laborum aute exercitation. Dolore
-                aliqua ipsum voluptate ipsum est exercitation irure officia.
-                Nostrud sit enim in qui excepteur esse. Quis nostrud excepteur
-                eu ipsum laboris amet Lorem.
-            </p>
-        </div>
+<div class="nav">
+    <div class="nav-card">
+        Ramenez La Coupe
     </div>
+    <div class="nav-list">
+        <a href="#viz1-a"><li class="nav-list-item">Goals and Expected Goals For and Against France</li></a>
+        <a href="#viz2-a"><li class="nav-list-item">Visualisation of some of France’s playstyle and performance against its opponents</li></a>
+        <a href="#viz3-a"><li class="nav-list-item">Comparision of the french national team players</li></a>
+        <a href="#viz4-a"><li class="nav-list-item">Visualization of Top Player Performances: Comparing France's Best Players to Opposing Teams' Best Player</li></a>
+        <a href="#viz5-a"><li class="nav-list-item">Comparision of France’s performance compared to the other countries in the World Cup 2022</li></a>
+    </div>
+</div>
+<div class="main-viz-container">
+<div id="viz1-a" class="viz1-container">
     <Viz1 />
 </div>
-<div>
-    <div class="viz-introduction viz2-introduction">
-        <div class="viz-container">
-            <h1 class="viz-introduction-title">X</h1>
-            <p>
-                Quis elit dolore consectetur ipsum sit sunt quis Lorem eiusmod
-                irure do dolor. Ex enim duis exercitation ad consequat
-                reprehenderit in sint aute ex do nisi aliquip. Fugiat velit esse
-                sit laboris dolore velit.
-                <br /><br />
-                Veniam sint cupidatat Lorem pariatur duis dolore voluptate mollit
-                esse aliqua proident. Dolor duis cupidatat sint aliquip sit ad exercitation
-                non mollit. Adipisicing sunt Lorem elit sint dolor. Incididunt laboris
-                sint sint mollit consectetur reprehenderit consectetur minim esse
-                consectetur ipsum commodo quis. Nulla in commodo ex irure elit. Tempor
-                nisi exercitation elit tempor nulla amet Lorem veniam non ad reprehenderit
-                aliquip adipisicing in.
-            </p>
-        </div>
-    </div>
+<div id="viz2-a" class="viz2-container">
     <Viz2 />
 </div>
-<div class="viz3-container">
-    <div class="viz-introduction viz3-introduction">
-        <div class="viz-container">
-            <h1 class="viz-introduction-title">
-                Comparision of France's players
-            </h1>
-            <p>
-                In cupidatat velit consectetur non aute ut occaecat nisi
-                reprehenderit reprehenderit laborum aute exercitation. Dolore
-                aliqua ipsum voluptate ipsum est exercitation irure officia.
-                Nostrud sit enim in qui excepteur esse. Quis nostrud excepteur
-                eu ipsum laboris amet Lorem.
-                <br /> Nostrud veniam aliquip dolor sit consequat. Aliqua mollit
-                incididunt id do deserunt tempor nostrud magna. Quis sit
-                pariatur cillum voluptate Lorem mollit eiusmod. Eu eiusmod velit
-                in ut id reprehenderit reprehenderit Lorem velit. Cupidatat
-                proident mollit elit pariatur pariatur esse occaecat et ex
-                exercitation sunt ea ad sint. Est minim veniam id labore magna
-                nulla laborum tempor et laborum ipsum ea exercitation. <br />
-                Aliqua consectetur excepteur dolore eu magna quis excepteur nulla
-                nulla minim est est. Amet occaecat amet aliquip aliquip. Laborum
-                aliqua duis mollit duis. Laborum irure consequat qui in quis sunt.
-                Qui ea nostrud est quis. Adipisicing deserunt consectetur tempor
-                ad. Esse incididunt sit sint aliquip nisi eiusmod id enim laborum
-                nisi.
-            </p>
-        </div>
-    </div>
+<div id="viz3-a" class="viz3-container">
     <Viz3 />
 </div>
-<div>
-    <div class="viz-introduction viz4-introduction">
-        <div class="viz-container">
-            <h1 class="viz-introduction-title">
-                Comparision of top players from different competing teams
-            </h1>
-            <p>
-                In cupidatat velit consectetur non aute ut occaecat nisi
-                reprehenderit reprehenderit laborum aute exercitation. Dolore
-                aliqua ipsum voluptate ipsum est exercitation irure officia.
-                Nostrud sit enim in qui excepteur esse. Quis nostrud excepteur
-                eu ipsum laboris amet Lorem.
-                <br /> Nostrud veniam aliquip dolor sit consequat. Aliqua mollit
-                incididunt id do deserunt tempor nostrud magna. Quis sit
-                pariatur cillum voluptate Lorem mollit eiusmod. Eu eiusmod velit
-                in ut id reprehenderit reprehenderit Lorem velit. Cupidatat
-                proident mollit elit pariatur pariatur esse occaecat et ex
-                exercitation sunt ea ad sint. Est minim veniam id labore magna
-                nulla laborum tempor et laborum ipsum ea exercitation. <br />
-                Aliqua consectetur excepteur dolore eu magna quis excepteur nulla
-                nulla minim est est. Amet occaecat amet aliquip aliquip. Laborum
-                aliqua duis mollit duis. Laborum irure consequat qui in quis sunt.
-                Qui ea nostrud est quis. Adipisicing deserunt consectetur tempor
-                ad. Esse incididunt sit sint aliquip nisi eiusmod id enim laborum
-                nisi.
-            </p>
-        </div>
-    </div>
+<div id="viz4-a" class="viz4-container">
+    
     <Viz4 />
 </div>
-<div>
-    <div class="viz-introduction viz5-introduction">
-        <div class="viz-container">
-            <h1 class="viz-introduction-title">
-                Comparision of top players from different competing teams
-            </h1>
-            <p>
-                In cupidatat velit consectetur non aute ut occaecat nisi
-                reprehenderit reprehenderit laborum aute exercitation. Dolore
-                aliqua ipsum voluptate ipsum est exercitation irure officia.
-                Nostrud sit enim in qui excepteur esse. Quis nostrud excepteur
-                eu ipsum laboris amet Lorem.
-                <br /> Nostrud veniam aliquip dolor sit consequat. Aliqua mollit
-                incididunt id do deserunt tempor nostrud magna. Quis sit
-                pariatur cillum voluptate Lorem mollit eiusmod. Eu eiusmod velit
-                in ut id reprehenderit reprehenderit Lorem velit. Cupidatat
-                proident mollit elit pariatur pariatur esse occaecat et ex
-                exercitation sunt ea ad sint. Est minim veniam id labore magna
-                nulla laborum tempor et laborum ipsum ea exercitation. <br />
-                Aliqua consectetur excepteur dolore eu magna quis excepteur nulla
-                nulla minim est est. Amet occaecat amet aliquip aliquip. Laborum
-                aliqua duis mollit duis. Laborum irure consequat qui in quis sunt.
-                Qui ea nostrud est quis. Adipisicing deserunt consectetur tempor
-                ad. Esse incididunt sit sint aliquip nisi eiusmod id enim laborum
-                nisi.
-            </p>
-        </div>
-    </div>
+<div id="viz5-a" class="viz5-container">
     <Viz5 />
+</div>
 </div>
 
 <style>
+    .container-title {
+        text-align: center;
+    }
     .viz-introduction-title {
         text-align: center;
     }
@@ -170,5 +73,75 @@
     }
     .viz5-introduction {
         background: lightcoral;
+    }
+
+    .main-viz-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    .nav {
+        height: 100vh;
+        display: flex;
+        gap: 1rem;
+        flex-direction: row;
+    }
+
+    .nav-list {
+        list-style: none;
+        gap: 1rem;
+        flex: .75;
+        padding: 3rem;
+        font-size: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    .nav-list-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 75%;
+    }
+
+    .nav-list-item:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .nav-card {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #101026 !important;
+        color: white;
+        font-weight: bolder;
+        font-size: 48px;
+        text-align: center;
+    }
+    
+    .viz1-container {
+        min-height: 100vh;
+    }
+
+    .viz2-container {
+        height: 100vh;
+    }
+
+    .viz3-container {
+    }
+
+    .viz4-container {
+        min-height: 100vh;
+    }
+
+    .viz5-container {
+        height: 100vh;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
     }
 </style>

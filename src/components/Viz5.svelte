@@ -30,7 +30,9 @@
                 t.Ast = parseInt(t.Ast);
                 t.CrdY = parseInt(t.CrdY);
                 t.team = team;
-                t.goalsToExGRatio = (parseFloat(t.Gls) / parseFloat(t.xG)).toFixed(2);
+                t.goalsToExGRatio = (
+                    parseFloat(t.Gls) / parseFloat(t.xG)
+                ).toFixed(2);
             });
 
             let xScalePoss = d3
@@ -79,7 +81,7 @@
                 .attr("width", 600)
                 .attr("height", 50)
                 .attr("rx", 5)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScalePoss))
@@ -94,13 +96,11 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 200)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleAssists))
                 .attr("transform", `translate(0, 250)`);
-
-                
 
             let yellowCardsChart = svg
                 .append("g")
@@ -111,7 +111,7 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 400)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleYellowCrd))
@@ -126,7 +126,7 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 600)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleGExRatio))
@@ -159,9 +159,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -170,17 +170,24 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
-                    d3.select(this).attr("fill", "darkgreen");
+                    if (data.team === "fr") {
+                        return;
+                    }
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-poss`).attr("opacity", 1);
                     d3.select(`.${data.team}-poss-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad.split(' ')[1]);
+                        .text(data.Squad.split(" ")[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === "fr") {
+                        return;
+                    }
+
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-poss`).attr("opacity", 0.25);
@@ -226,7 +233,7 @@
                     return -20;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
@@ -235,13 +242,13 @@
                 })
                 .attr("transform", (d: any) => {
                     if (d.team === "fr") {
-                        return `translate(-30, 30) rotate(-45,${xScalePoss(
+                        return `translate(-30, 40) rotate(-45,${xScalePoss(
                             d.Poss
                         )},75)`;
                     } else return "";
                 })
-                .attr('font-weight', 'lighter')
-                .text((d: any) => d.Squad.split(' ')[1]);
+                .attr("font-weight", "lighter")
+                .text((d: any) => d.Squad.split(" ")[1]);
 
             ///////////////
             ////Assists///
@@ -271,9 +278,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -282,17 +289,23 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
-                    d3.select(this).attr("fill", "darkgreen");
+                    if (data.team === "fr") {
+                        return;
+                    }
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-assists`).attr("opacity", 1);
                     d3.select(`.${data.team}-assists-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(" ")[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === "fr") {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-assists`).attr("opacity", 0.25);
@@ -338,26 +351,27 @@
                     return 175;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
                     }
                     return 0;
                 })
-                .attr("transform", (d: any) =>{
-                  if (d.team === "fr") {
-                    return `translate(-225, 40) rotate(-45,${xScaleAssists(d.Ast)},75)`;
-                  } else return "";
+                .attr("transform", (d: any) => {
+                    if (d.team === "fr") {
+                        return `translate(-225, 50) rotate(-45,${xScaleAssists(
+                            d.Ast
+                        )},75)`;
+                    } else return "";
                 })
-                .attr('font-weight', 'lighter')
-                .text((d: any) => d.Squad.split(' ')[1]);
-
+                .attr("font-weight", "lighter")
+                .text((d: any) => d.Squad.split(" ")[1]);
 
             /////////////////
             //Yellow Cards///
             /////////////////
-            
+
             data.sort((a: any, b: any) => b.CrdY - a.CrdY);
 
             const gSelectionYllwCrd = svg
@@ -382,9 +396,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -393,17 +407,23 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
-                    d3.select(this).attr("fill", "darkgreen");
+                    if (data.team === "fr") {
+                        return;
+                    }
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd`).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(" ")[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === "fr") {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-yellowCrd`).attr("opacity", 0.25);
@@ -412,7 +432,7 @@
                         .text("");
                 });
 
-             gSelectionYllwCrd
+            gSelectionYllwCrd
                 .append("line")
                 .attr("class", (d: any) => `${d.team}-yellowCrd`)
                 .attr("x1", (d: any) => xScaleYellowCrd(d.CrdY))
@@ -449,26 +469,30 @@
                     return 375;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
                     }
                     return 0;
                 })
-                .attr("transform", (d: any) =>{
-                  if (d.team === "fr") {
-                    return `translate(-365, 95) rotate(-45,${xScaleYellowCrd(d.CrdY)},75)`;
-                  } else return "";
+                .attr("transform", (d: any) => {
+                    if (d.team === "fr") {
+                        return `translate(-365, 105) rotate(-45,${xScaleYellowCrd(
+                            d.CrdY
+                        )},75)`;
+                    } else return "";
                 })
-                .attr('font-weight', 'lighter')
-                .text((d: any) => d.Squad.split(' ')[1]);
+                .attr("font-weight", "lighter")
+                .text((d: any) => d.Squad.split(" ")[1]);
 
             /////////////////////////////////
             //Goals to expected Goals Ratio//
             /////////////////////////////////
-            
-            data.sort((a: any, b: any) => b.goalsToExGRatio - a.goalsToExGRatio);
+
+            data.sort(
+                (a: any, b: any) => b.goalsToExGRatio - a.goalsToExGRatio
+            );
 
             const gSelectionGtoExG = svg
                 .select(".gToExG-viz5")
@@ -492,9 +516,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -503,17 +527,23 @@
                     return "0";
                 })
                 .on("mouseover", function (_: any, data: any) {
-                    d3.select(this).attr("fill", "darkgreen");
+                    if (data.team === "fr") {
+                        return;
+                    }
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG`).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG-text`)
                         .attr("opacity", 1)
-                        .text(data.Squad);
+                        .text(data.Squad.split(" ")[1]);
                 })
                 .on("mouseleave", function (_: any, data: any) {
+                    if (data.team === "fr") {
+                        return;
+                    }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-gToExG`).attr("opacity", 0.25);
@@ -559,33 +589,33 @@
                     return 575;
                 })
                 .attr("stroke", "black")
-                .attr("font-size", "0.75rem")
+                .attr("font-size", "16px")
                 .attr("opacity", (d) => {
                     if (d.team === "fr") {
                         return 1;
                     }
                     return 0;
                 })
-                .attr("transform", (d: any) =>{
-                  if (d.team === "fr") {
-                    return `translate(-507, 155) rotate(-45,${xScaleGExRatio(d.goalsToExGRatio)},75)`;
-                  } else return "";
+                .attr("transform", (d: any) => {
+                    if (d.team === "fr") {
+                        return `translate(-507, 165) rotate(-45,${xScaleGExRatio(
+                            d.goalsToExGRatio
+                        )},75)`;
+                    } else return "";
                 })
-                .attr('font-weight', 'lighter')
-                .text((d: any) => d.Squad.split(' ')[1]);
+                .attr("font-weight", "lighter")
+                .text((d: any) => d.Squad.split(" ")[1]);
         });
     });
 </script>
 
 <div class="vizContainer">
     <div id="description">
-        <h1>Adipisicing aute irure consequat laborum minim mollit deserunt ad ut magna consequat dolor cupidatat ullamco.</h1>
-        Amet dolor culpa cupidatat exercitation. Lorem nulla ad nisi aute elit
-        laboris reprehenderit. Commodo adipisicing reprehenderit dolor sunt
-        duis. Reprehenderit ex mollit cupidatat sunt labore elit ut voluptate
-        adipisicing magna aliquip. Dolor magna nulla ad anim magna fugiat
-        laborum quis ad.
-        <br /><br />
+        <h1>
+            France’s performance compared to the other countries in the World
+            Cup 2022
+        </h1>
+        <br />
         Eiusmod ex duis anim irure. Enim officia in non minim mollit duis consequat.
         Cillum id culpa eu do magna. Lorem cillum sunt eiusmod amet consequat. Pariatur
         labore dolore nostrud excepteur ea proident enim duis eiusmod commodo eu
@@ -621,5 +651,4 @@
         flex-direction: column;
         gap: 1rem;
     }
-
 </style>

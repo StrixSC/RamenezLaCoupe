@@ -39,7 +39,7 @@
     let _data: PlayerData[][] = [];
     let _columns: string[][] = [];
     let currentStep = 0;
-    const margins = { top: 80, right: 0, bottom: 80, left: 55 };
+    const margins = { top: 80, right: 55, bottom: 125, left: 75 };
 
     const X_PADDING = 0.15;
     const SUB_X_PADDING = 0.015;
@@ -54,12 +54,11 @@
         "#70ff6b",
     ];
     
-    const getAndParseData = (src: string) => {
-        d3.csv(src)
+    const getAndParseData = (order: number, src: string) => {
+        return d3.csv(src)
                 .then((data) => {
                     const [columns, __data] = transformData(data);
-                    _columns.push(columns);
-                    _data.push(__data);
+                    return {order, columns, __data};
                 })
                 .catch((e) => {
                     console.error(e);
@@ -81,15 +80,20 @@
 
 
         Promise.all([
-            getAndParseData("/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
-            getAndParseData("/data/PlayerStats/France/Offensive_2_Kicks.csv"),
-            getAndParseData("/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_1_Tackles.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_2_Blocks.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_3_Challenges.csv"),
-            getAndParseData("/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
-            getAndParseData("/data/PlayerStats/France/Possession_1_Controls.csv"),
-        ]).then(() => {
+            getAndParseData(1, "/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
+            getAndParseData(2, "/data/PlayerStats/France/Offensive_2_Kicks.csv"),
+            getAndParseData(3, "/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
+            getAndParseData(4, "/data/PlayerStats/France/Defensive_1_Tackles.csv"),
+            getAndParseData(5, "/data/PlayerStats/France/Defensive_2_Blocks.csv"),
+            getAndParseData(6, "/data/PlayerStats/France/Defensive_3_Challenges.csv"),
+            getAndParseData(7, "/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
+            getAndParseData(8, "/data/PlayerStats/France/Possession_1_Controls.csv"),
+        ]).then((values) => {
+            values.sort((a, b) => a!.order - b!.order);
+            for (const value of values) {
+                _data.push(value!.__data);
+                _columns.push(value!.columns)
+            }
             setSizing();
             build();
         });
@@ -264,7 +268,7 @@
 <main>
 <div class="container-viz3" id="scroll-viz3">
     <div class="scroll__graphic-viz3 graph-viz3" id="bar-chart-viz3">
-            <svg class="main-svg" />
+            <svg class="svg-viz3 main-svg" />
             <svg class="legend-viz3" />
     </div>
     <div class="scroll__text-viz3">
@@ -313,7 +317,11 @@
 </div>
 </main>
 <style>
-
+    .svg-viz3 {
+        background: white !important;
+        border-radius: 10px;
+        margin: 2rem;
+    }
     .graph-viz3 {
         width: 100%;
         display: flex;
