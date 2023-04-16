@@ -75,7 +75,7 @@
                 .attr("width", 600)
                 .attr("height", 50)
                 .attr("rx", 5)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScalePoss))
@@ -90,7 +90,7 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 200)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleAssists))
@@ -105,7 +105,7 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 400)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleYellowCrd))
@@ -120,7 +120,7 @@
                 .attr("height", 50)
                 .attr("rx", 5)
                 .attr("y", 600)
-                .attr("fill", "lightblue");
+                .attr("fill", "rgb(129, 189, 252)");
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleGExRatio))
@@ -153,9 +153,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -167,7 +167,7 @@
                     if (data.team === "fr") {
                         return;
                     }
-                    d3.select(this).attr("fill", "darkgreen");
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-poss`).attr("opacity", 1);
                     d3.select(`.${data.team}-poss-text`)
@@ -181,7 +181,7 @@
 
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-poss`).attr("opacity", 0.25);
@@ -272,9 +272,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -286,7 +286,7 @@
                     if (data.team === "fr") {
                         return;
                     }
-                    d3.select(this).attr("fill", "darkgreen");
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-assists`).attr("opacity", 1);
                     d3.select(`.${data.team}-assists-text`)
@@ -299,7 +299,7 @@
                     }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-assists`).attr("opacity", 0.25);
@@ -390,9 +390,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -404,7 +404,7 @@
                     if (data.team === "fr") {
                         return;
                     }
-                    d3.select(this).attr("fill", "darkgreen");
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd`).attr("opacity", 1);
                     d3.select(`.${data.team}-yellowCrd-text`)
@@ -417,7 +417,7 @@
                     }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-yellowCrd`).attr("opacity", 0.25);
@@ -510,9 +510,9 @@
                 .attr("height", 50)
                 .attr("fill", (d: any) => {
                     if (d.team === "fr") {
-                        return "darkblue";
+                        return "rgb(51, 78, 105)";
                     }
-                    return "lightblue";
+                    return "rgb(129, 189, 252)";
                 })
                 .attr("opacity", (d: any) => {
                     if (d.team === "fr") {
@@ -524,7 +524,7 @@
                     if (data.team === "fr") {
                         return;
                     }
-                    d3.select(this).attr("fill", "darkgreen");
+                    d3.select(this).attr("fill", "rgb(116, 174, 89)");
                     d3.select(this).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG`).attr("opacity", 1);
                     d3.select(`.${data.team}-gToExG-text`)
@@ -537,7 +537,7 @@
                     }
                     d3.select(this).attr(
                         "fill",
-                        data.team === "fr" ? "darkblue" : "lightblue"
+                        data.team === "fr" ? "rgb(51, 78, 105)" : "rgb(129, 189, 252)"
                     );
                     d3.select(this).attr("opacity", 0);
                     d3.select(`.${data.team}-gToExG`).attr("opacity", 0.25);
