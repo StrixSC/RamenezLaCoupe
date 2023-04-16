@@ -7,7 +7,7 @@
 </script>
 <div class="nav">
     <div class="nav-card">
-        Ramenez La Coupe à la Maison
+        Ramenez La Coupe
     </div>
     <div class="nav-list">
         <a href="#viz1-a"><li class="nav-list-item">Goals and Expected Goals For and Against France</li></a>
