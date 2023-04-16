@@ -1,7 +1,9 @@
 import type { PlayerData } from "src/models/france-player-data";
 
-export const transformData = (data: Object[]) => {
+export const transformData = (data: Object[]): [string[], PlayerData[]] => {
     let n: PlayerData[] = [];
+    const columns = data.shift() as PlayerData;
+    const columnTitles = Object.keys(columns).map((k) => columns[k]).filter((v) => v != "Player");
     for (const d of data) {
         const tmp: PlayerData[] = [];
         const keys = Object.keys(d);
@@ -18,7 +20,7 @@ export const transformData = (data: Object[]) => {
         n = n.concat(tmp);
     }
 
-    return n.sort((a, b) => b.value - a.value).filter((d) => d.value !== 0);
+    return [columnTitles!, n.sort((a, b) => b.value - a.value)];
 };
 
 export const findMaximumKeyValue = (keys: string[], data: Object[]) => {

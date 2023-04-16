@@ -12,7 +12,6 @@
     import type { PlayerData } from "src/models/france-player-data";
 
     let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-    let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
     let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
     let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
     let scroller: scrollama.ScrollamaInstance;
@@ -30,11 +29,16 @@
 
         // update graphic based on step here
         const stepData = parseFloat(response.element.getAttribute('data-step-viz3'));
-        console.log(stepData);
+        currentStep = stepData - 1;
+        if (currentStep >= _data.length) {
+            currentStep = 0;
+        }
+        build();
     };
 
     let _data: PlayerData[][] = [];
-    let current: PlayerData[] = [];
+    let _columns: string[][] = [];
+    let currentStep = 0;
     const margins = { top: 80, right: 0, bottom: 80, left: 55 };
 
     const X_PADDING = 0.15;
@@ -52,7 +56,6 @@
 
     onMount(async () => {
         container = d3.select("#scroll-viz3");
-        graphic = container.select(".scroll__graphic-viz3");
         text = container.select(".scroll__text-viz3");
         step = text.selectAll(".step-viz3");
         scroller = scrollama();
@@ -67,23 +70,30 @@
         Promise.all([
             d3
                 .csv("/data/PlayerStats/France/Offensive_1.csv")
-                .then((data) => _data.push(transformData(data)))
+                .then((data) => {
+                    const [columns, __data] = transformData(data);
+                    _columns.push(columns);
+                    _data.push(__data);
+                })
                 .catch((e) => {
                     console.error(e);
                     _data.push([]);
                 }),
             d3
                 .csv("/data/PlayerStats/France/Offensive_2.csv")
-                .then((data) => _data.push(transformData(data)))
+                .then((data) => {
+                    const [columns, __data] = transformData(data);
+                    _columns.push(columns);
+                    _data.push(__data);
+                })
                 .catch((e) => {
                     console.error(e);
                     _data.push([]);
                 }),
-        ]).then((value) => {
-            console.log(value);
-            current = _data[0];
+        ]).then(() => {
             setSizing();
             build();
+            buildLegend();
         });
 
         // Generate graph:
@@ -103,7 +113,14 @@
         setSizing();
         build();
 
-        function setSizing() {
+        
+        window.addEventListener("resize", () => {
+            setSizing();
+            build();
+        });
+    });
+
+    function setSizing() {
             bounds = (
                 d3.select(".graph-viz3").node() as any
             ).getBoundingClientRect();
@@ -124,10 +141,13 @@
                 .attr("height", svgSize.height);
         }
 
+        function buildLegend() {
+            
+        }
+
         function build() {
-            console.log(_data);
-            const groups = getDataGroups(current);
-            const subgroups = getDataSubgroups(current);
+            const groups = getDataGroups(_data[currentStep]);
+            const subgroups = getDataSubgroups(_data[currentStep]);
             const xScale = d3
                 .scaleBand()
                 .rangeRound([0, graphSize.width])
@@ -141,7 +161,7 @@
             const yScale = d3
                 .scaleLinear()
                 .rangeRound([graphSize.height, 0])
-                .domain([0, getLargestValue(current)]);
+                .domain([0, getLargestValue(_data[currentStep])]);
             const colorScale = d3
                 .scaleOrdinal()
                 .range(colors)
@@ -169,7 +189,7 @@
             // Groups:
             d3.select("#graph-g-viz3")
                 .selectAll(".group")
-                .data(current)
+                .data(_data[currentStep])
                 .join("g")
                 .attr("class", "group")
                 .attr(
@@ -215,19 +235,40 @@
                     (d: PlayerData) => graphSize.height - yScale(d.value)
                 )
                 .attr("y", (d: PlayerData) => yScale(d.value));
+            
+            // Legend
+
+            const svg = d3.select('.legend-viz3').attr('height', _columns[currentStep].length * 100).attr('width', 400);
+            var size = 20;
+            svg.selectChildren().remove();
+            svg.selectAll("dots-viz3")
+                .data(() => subgroups)
+                .enter()
+                .append("rect")
+                    .attr("x", 100)
+                    .attr("y", (_, i: number) => 100 + i*(size+5)) // 100 is where the first dot appears. 25 is the distance between dots
+                    .attr("width", size)
+                    .attr("height", size)
+                    .style("fill", (d: string) => colorScale(d) as string );
+            
+            svg.selectAll("labels-viz3")
+                .data(_columns[currentStep])
+                .enter()
+                .append("text")
+                .attr("x", 100 + size*1.2)
+                .attr("y", (_, i: number) => 100 + i*(size+5) + (size/2)) // 100 is where the first dot appears. 25 is the distance between dots
+                .text((d: string) => d)
+                .attr("text-anchor", "left")
+                .style("alignment-baseline", "middle")
         }
 
-        window.addEventListener("resize", () => {
-            setSizing();
-            build();
-        });
-    });
 </script>
 
 <main>
 <div class="container-viz3" id="scroll-viz3">
     <div class="scroll__graphic-viz3 graph-viz3" id="bar-chart-viz3">
             <svg class="main-svg" />
+            <svg class="legend-viz3" />
     </div>
     <div class="scroll__text-viz3">
         <div class="step-viz3" data-step-viz3="1">
