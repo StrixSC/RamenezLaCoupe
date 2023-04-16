@@ -2,7 +2,7 @@
     import * as d3 from "d3";
     import { onMount } from "svelte";
 
-    const datafile = "/src/data/OverallStats/TeamOverallStats.csv";
+    const datafile = "/data/OverallStats/TeamOverallStats.csv";
 
     let teams = [];
     let goalsToExGRatio = [];
