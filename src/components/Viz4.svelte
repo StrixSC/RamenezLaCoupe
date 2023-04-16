@@ -1,132 +1,86 @@
 <script lang="ts">
   
   import * as d3 from "d3";
-    import type { PlayerData } from "src/models/france-player-data";
-    import { transformData } from "../utils/viz3-helpers";
+  import type { PlayerData } from "src/models/france-player-data";
   import { onMount } from 'svelte'
-  import scrollama from "scrollama";
 
   let _data: PlayerData[][] = [];
   let current: PlayerData[] = [];
-  let currentAxis = [{}];
-    
-  let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-  let graphic: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-  let chart: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
-  let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
-  let step: d3.Selection<d3.BaseType, unknown, d3.BaseType, unknown>
-  let scroller: scrollama.ScrollamaInstance;
+  
+  var data: any = []
 
-  const handleStepEnter = (response: any) => {
-        // response = { element, direction, index }
+  var players = ["Giroux", "Mbappe", "Griezmann", "Baseline"]
 
-        // fade in current step
-        step.classed("is-active", (_, i) => {
-            return i === response.index;
-        });
+  var chartAxis =
+      [{axis:"Shots"},
+      {axis:"SoT"},
+      {axis:"Passes"},
+      {axis:"Touches"},
+      {axis:"Dribbles"},
+      {axis:"Blocks"},
+      {axis:"Interceptions"},
+      {axis:"Tackle"}]; 
 
-        // update graphic based on step here
-        const stepData = parseFloat(response.element.getAttribute('data-step-viz4'));
-        switch(stepData) {
-          case 1:
-            currentAxis = chartAxis[0];
-            SetupRadarChart();
-            break;
-          case 2:
-            currentAxis = chartAxis[1];
-            SetupRadarChart();
-            break;
-        }
-    };
+  var dotColors: any = []
+
+  var cfg: any = {
+    w: 700, //Width of the circle
+    h: 700, //Height of the circle
+    margin: { top: 20, right: 20, bottom: 20, left: 20 }, //The margins of the SVG
+    levels: 3, //How many levels or inner circles should there be drawn
+    maxValue: 0, //What is the value that the biggest circle will represent
+    labelFactor: 1.25, //How much farther than the radius of the outer circle should the labels be placed
+    wrapWidth: 60, //The number of pixels after which a label needs to be given a new line
+    opacityArea: 0.35, //The opacity of the area of the blob
+    dotRadius: 4, //The size of the colored circles of each blog
+    opacityCircles: 0.1, //The opacity of the circles of each blob
+    strokeWidth: 2, //The width of the stroke around each blob
+    roundStrokes: false, //If true the area and stroke will follow a round path (cardinal-closed)
+    color: d3.scaleOrdinal().range([
+        "#74ae59",
+        "#334e69",
+        "#d0af76",
+        "#f64999",
+        // "#54d8f8",
+        // "#69cccf",
+        // "#70ff6b",
+    ]), 
+  };
 
   ////////////////////////////////////////////////////////////// 
   //////////////////////// Set-Up ////////////////////////////// 
   ////////////////////////////////////////////////////////////// 
   onMount(async () => {
-    container = d3.select("#scroll-viz4");
-        graphic = container.select(".scroll__graphic-viz4");
-        chart = graphic.select(".chart-viz4");
-        text = container.select(".scroll__text-viz4");
-        step = text.selectAll(".step-viz4");
-        scroller = scrollama();
-        scroller.setup({
-            step: ".scroll__text-viz4 .step-viz4", // the step elements
-            offset: 0.6, // set the trigger to be 1/2 way down screen
-            debug: false, // display the trigger offset for testing
-        })
-        .onStepEnter(handleStepEnter);
-
     Promise.all([
 
         ]).then(() => {
             current = _data[0];
         });
-    
-    currentAxis = chartAxis[0];
+
+    // Temporary randomize values
+    let index = 0;
+    for(var name of players) {
+      var stats: any = []
+      for(var stat of chartAxis) {
+        stats.push(
+          {id: index, axis: stat.axis, value: Math.floor(Math. random()*50), name: name}
+        )
+      } 
+      data.push(
+          stats
+        )
+      index++
+    }
 
     SetupRadarChart();
     buildLegend();
 
-  })
-
-  var data = [
-        [
-        {axis:"Shots",value:22, name: "Messi"},
-        {axis:"SoT",value:28},
-        {axis:"Passes",value:29},
-        {axis:"Touches",value:17},
-        {axis:"Dribbles",value:22},
-        {axis:"Block",value:2},
-        {axis:"Interceptions",value:21},
-        {axis:"Tackle",value:50}			
-        ],[
-        {axis:"Shots",value:27,  name: "Mbappe"},
-        {axis:"SoT",value:16},
-        {axis:"Passes",value:35},
-        {axis:"Touches",value:13},
-        {axis:"Dribbles",value:20},
-        {axis:"Block",value:13},
-        {axis:"Interceptions",value:35},
-        {axis:"Tackle",value:38}		
-        ],[
-          {axis:"Shots",value:12, name: "Ronaldo"},
-        {axis:"SoT",value:28},
-        {axis:"Passes",value:29},
-        {axis:"Touches",value:17},
-        {axis:"Dribbles",value:22},
-        {axis:"Block",value:35},
-        {axis:"Interceptions",value:21},
-        {axis:"Tackle",value:50}		
-        ]
-      ];
-
-      var chartAxis = [
-						[{axis:"Shots"},
-						{axis:"SoT"},
-						{axis:"Passes"},
-						{axis:"Touches"},
-						{axis:"Dribbles"},
-						{axis:"Blocks"},
-						{axis:"Interceptions"},
-						{axis:"Tackle"}],
-
-            [{axis:"Tackle"},
-						{axis:"Interceptions"},
-						{axis:"Blocks"},
-						{axis:"Dribbles"},
-						{axis:"Touches"},
-						{axis:"Passes"},
-						{axis:"SoT"},
-						{axis:"Shots"}],
-				]
+  })		
 
   function SetupRadarChart() {
     var margin = {top: 100, right: 100, bottom: 100, left: 100},
-      width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
-      height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
-
-    var color = d3.scaleOrdinal()
-      .range(["#EDC951","#CC333F","#00A0B0"]);
+      width = Math.min(cfg.w, window.innerWidth - 10) - margin.left - margin.right,
+      height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20); 
       
     var radarChartOptions = {
       w: width,
@@ -135,27 +89,11 @@
       maxValue: 0.5,
       levels: 5,
       roundStrokes: true,
-      color: color
+      color: cfg.color
     };
     
     RadarChart(".radarChart-viz4", data, radarChartOptions);
   }
-
-    var cfg = {
-      w: 600, //Width of the circle
-      h: 600, //Height of the circle
-      margin: { top: 20, right: 20, bottom: 20, left: 20 }, //The margins of the SVG
-      levels: 3, //How many levels or inner circles should there be drawn
-      maxValue: 0, //What is the value that the biggest circle will represent
-      labelFactor: 1.25, //How much farther than the radius of the outer circle should the labels be placed
-      wrapWidth: 60, //The number of pixels after which a label needs to be given a new line
-      opacityArea: 0.35, //The opacity of the area of the blob
-      dotRadius: 4, //The size of the colored circles of each blog
-      opacityCircles: 0.1, //The opacity of the circles of each blob
-      strokeWidth: 2, //The width of the stroke around each blob
-      roundStrokes: false, //If true the area and stroke will follow a round path (cardinal-closed)
-      color: d3.scaleOrdinal(d3.schemeCategory10), //Color function
-    };
 
   function RadarChart(id: String, data: any[], options: {}) {
     //Put all of the options into a variable called cfg
@@ -178,7 +116,7 @@
         );
       }) as unknown as number);
 
-    var allAxis = currentAxis.map(function (i: any, j) {
+    var allAxis = chartAxis.map(function (i: any, j) {
         return i.axis;
       }), //Names of each axis
       total = allAxis.length, //The number of different axes
@@ -285,7 +223,7 @@
     axis
       .append("text")
       .attr("class", "legend")
-      .style("font-size", "11px")
+      .style("font-size", "12px")
       .attr("text-anchor", "middle")
       .attr("dy", "0.35em")
       .attr("x", function (d, i) {
@@ -343,6 +281,7 @@
         return radarLine(d);
       })
       .style("fill", function (d, i: any) {
+        data[i] = d.map(v => ({...v, color: cfg.color(i)}))
         return cfg.color(i);
       })
       .style("fill-opacity", cfg.opacityArea)
@@ -395,8 +334,13 @@
       .attr("cy", function (d: any, i) {
         return rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2);
       })
-      .style("fill", function (d, i, j: any) {
-        return cfg.color(j);
+      .style("fill", function (d: any, i, j: any) {
+        let defaultColor = "black"
+        for(var player of data) {
+          if(player[0].name == d.name)
+            return player[0].color
+        }
+        return defaultColor
       })
       .style("fill-opacity", 0.8);
 
@@ -421,7 +365,7 @@
       .enter()
       .append("circle")
       .attr("class", "radarInvisibleCircle")
-      .attr("r", cfg.dotRadius * 1.5)
+      .attr("r", cfg.dotRadius * 1.2)
       .attr("cx", function (d: any, i) {
         return rScale(d.value) * Math.cos(angleSlice * i - Math.PI / 2);
       })
@@ -467,7 +411,7 @@
         .attr("cy", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
         .attr("r", 7)
         .style("fill", function (d, i: any) {
-        return cfg.color(i);
+          return cfg.color(i);
       })
       .append("text")
        .attr("dx", function(d){return -20})
@@ -478,7 +422,7 @@
       .data(data)
       .enter()
       .append("text")
-      .attr("id", function (d, i) {
+      .attr("id", function (d: any, i) {
         return "text-" + d[0].name;
       })
         .attr("x", 120)
@@ -491,7 +435,7 @@
         .text(function(d: any){ return d[0].name})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
-        .on("mouseover", function (d, i) {
+        .on("mouseover", function (d, i: any) {
           d3.select(this).transition().duration(200).style("fill-opacity", 0.9)
           //Dim all blobs
           d3.selectAll(".radarArea")
@@ -514,32 +458,18 @@
 
 </script>
 
-<div class="container-viz4" id="scroll-viz4">
-  <div class="scroll__graphic-viz4 radarContainer-viz4">
-    <div class="radarChart-viz4"></div>
-  </div>
-  <div class="scroll__text-viz4">
-    <div class="step-viz4" data-step-viz4="1">
-        <h1>Offensive</h1>
+
+<div class="radarContainer-viz4">
+  <div id="radarLegend-viz4">   
+      <div>
+        <h1>Adipisicing aute irure consequat laborum minim mollit deserunt ad ut magna consequat dolor cupidatat ullamco.</h1>
+        <br /><br />
         <p>
           Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
         </p>
-        <div id="radarLegend-viz4"></div>
-    </div>
-    <div class="step-viz4" data-step-viz4="2">
-      <h1>Defensive</h1>
-      <p>
-        Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
-      </p>
-      <div id="radarLegend-viz4"></div>
-    </div>
-    <div class="step-viz4" data-step-viz4="3">
-        <h1>Step 3</h1>
-    </div>
-    <div class="step-viz4" data-step-viz4="4">
-        <h1>Step 4</h1>
-    </div>
   </div>
+  </div>
+  <div class="radarChart-viz4"></div>
 </div>
 
 <style>
@@ -547,6 +477,27 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2rem;
+    gap: 1rem;
   }
+
+  .radarChart-viz4 {
+    display: flex;
+    flex: 3;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #radarLegend-viz4 {
+    display: flex;
+    flex: 2;
+    flex-direction: column;
+    padding: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+  }
+
 </style>
 
