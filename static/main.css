@@ -1,8 +1,43 @@
+
+@font-face {
+    font-family: AbhayaLibre;
+    font-weight: normal;
+    src: url(fonts/AbhayaLibre-Regular.ttf);
+}
+
+@font-face {
+    font-family: AbhayaLibre;
+    font-weight: 600;
+    src: url(fonts/AbhayaLibre-SemiBold.ttf);
+}
+
+@font-face {
+    font-family: AbhayaLibre;
+    font-weight: 700;
+    src: url(fonts/AbhayaLibre-Bold.ttf);
+}
+
+@font-face {
+    font-family: AbhayaLibre;
+    font-weight: 800;
+    src: url(fonts/AbhayaLibre-ExtraBold.ttf);
+}
+
+
 * {
-    font-family: Georgia, "Times New Roman", Times, serif !important;
     margin: 0;
     padding: 0;
+    background: #EEEEEE !important;
+    font-family: AbhayaLibre !important;
+    font-size: 20px;
+    scroll-behavior: smooth !important;
 }
+
+h1 {
+    font-weight: bolder;
+    font-size: 32px;
+}
+
 
 .hoverable-element:hover {
     cursor: pointer;
@@ -35,7 +70,7 @@
     order: 1;
     padding-top: 1rem;
     padding-left: 1rem;
-    flex: 1;
+    flex: 2;
 }
 
 .step,

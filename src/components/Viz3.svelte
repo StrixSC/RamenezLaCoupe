@@ -10,7 +10,6 @@
         transformData,
     } from "../utils/viz3-helpers";
     import type { PlayerData } from "src/models/france-player-data";
-    import { dataset_dev } from "svelte/internal";
 
     let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
     let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
@@ -40,7 +39,7 @@
     let _data: PlayerData[][] = [];
     let _columns: string[][] = [];
     let currentStep = 0;
-    const margins = { top: 80, right: 0, bottom: 80, left: 55 };
+    const margins = { top: 80, right: 55, bottom: 125, left: 75 };
 
     const X_PADDING = 0.15;
     const SUB_X_PADDING = 0.015;
@@ -269,7 +268,7 @@
 <main>
 <div class="container-viz3" id="scroll-viz3">
     <div class="scroll__graphic-viz3 graph-viz3" id="bar-chart-viz3">
-            <svg class="main-svg" />
+            <svg class="svg-viz3 main-svg" />
             <svg class="legend-viz3" />
     </div>
     <div class="scroll__text-viz3">
@@ -318,7 +317,11 @@
 </div>
 </main>
 <style>
-
+    .svg-viz3 {
+        background: white !important;
+        border-radius: 10px;
+        margin: 2rem;
+    }
     .graph-viz3 {
         width: 100%;
         display: flex;

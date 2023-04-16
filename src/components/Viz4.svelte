@@ -462,7 +462,7 @@
 <div class="radarContainer-viz4">
   <div id="radarLegend-viz4">   
       <div>
-        <h1>Adipisicing aute irure consequat laborum minim mollit deserunt ad ut magna consequat dolor cupidatat ullamco.</h1>
+        <h1>Visualization of Top Player Performances: Comparing France's Best Players to Opposing Teams' Best Player</h1>
         <br /><br />
         <p>
           Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.

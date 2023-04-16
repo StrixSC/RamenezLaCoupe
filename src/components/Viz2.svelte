@@ -37,10 +37,10 @@
             .range([margin.top, height - margin.bottom]);
 
         // define an x axis in the graph
-        const xAxis1 = d3.axisBottom(xScale1).tickValues(d3.range(0, 25, 4));
+        const xAxis1 = d3.axisBottom(xScale1).tickValues(d3.range(0, 25, 4))
         const xAxis2 = d3.axisBottom(xScale2).tickValues(d3.range(24, -1, -4));
         const yAxis = d3.axisLeft(yScale).tickValues(d3.range(0, 900, 200));
-
+        svg.selectAll('tick').select('text').attr('class', 'viz2-ticks');
         // adjust x axises to the bottom make sure it is glued with x axis
         const adjustH = height - 47;
 
@@ -51,11 +51,11 @@
         // second parameter of translate is for height of axis
         svg.append("g")
             .attr("transform", "translate(650," + adjustH + ")")
-            .call(xAxis1);
+            .call(xAxis1)
 
         svg.append("g")
             .attr("transform", "translate(360," + adjustH + ")")
-            .call(xAxis2);
+            .call(xAxis2)
 
         svg.append("g")
             .attr("transform", "translate(" + adjustX + ",0)")
@@ -342,5 +342,19 @@
 </script>
 
 <div>
+    <h1 class="container-title">Visualisation of some of France’s playstyle and performance against its opponents.</h1>
     <div id="graph-viz2" />
 </div>
+
+<style>
+    #graph-viz2 {
+        font-size: 14px !important;
+    }
+
+    .container-title {
+        text-align: center;
+    }
+    :global(.viz2-ticks) {
+        font-size: 14px !important;
+    }
+</style>

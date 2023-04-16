@@ -598,13 +598,8 @@
 
 <div class="vizContainer">
     <div id="description">
-        <h1>Adipisicing aute irure consequat laborum minim mollit deserunt ad ut magna consequat dolor cupidatat ullamco.</h1>
-        Amet dolor culpa cupidatat exercitation. Lorem nulla ad nisi aute elit
-        laboris reprehenderit. Commodo adipisicing reprehenderit dolor sunt
-        duis. Reprehenderit ex mollit cupidatat sunt labore elit ut voluptate
-        adipisicing magna aliquip. Dolor magna nulla ad anim magna fugiat
-        laborum quis ad.
-        <br /><br />
+        <h1>France’s performance compared to the other countries in the World Cup 2022</h1>
+        <br />
         Eiusmod ex duis anim irure. Enim officia in non minim mollit duis consequat.
         Cillum id culpa eu do magna. Lorem cillum sunt eiusmod amet consequat. Pariatur
         labore dolore nostrud excepteur ea proident enim duis eiusmod commodo eu
