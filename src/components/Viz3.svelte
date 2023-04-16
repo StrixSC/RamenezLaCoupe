@@ -10,6 +10,7 @@
         transformData,
     } from "../utils/viz3-helpers";
     import type { PlayerData } from "src/models/france-player-data";
+    import { dataset_dev } from "svelte/internal";
 
     let container: d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
     let text: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
@@ -54,12 +55,11 @@
         "#70ff6b",
     ];
     
-    const getAndParseData = (src: string) => {
-        d3.csv(src)
+    const getAndParseData = (order: number, src: string) => {
+        return d3.csv(src)
                 .then((data) => {
                     const [columns, __data] = transformData(data);
-                    _columns.push(columns);
-                    _data.push(__data);
+                    return {order, columns, __data};
                 })
                 .catch((e) => {
                     console.error(e);
@@ -81,15 +81,20 @@
 
 
         Promise.all([
-            getAndParseData("/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
-            getAndParseData("/data/PlayerStats/France/Offensive_2_Kicks.csv"),
-            getAndParseData("/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_1_Tackles.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_2_Blocks.csv"),
-            getAndParseData("/data/PlayerStats/France/Defensive_3_Challenges.csv"),
-            getAndParseData("/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
-            getAndParseData("/data/PlayerStats/France/Possession_1_Controls.csv"),
-        ]).then(() => {
+            getAndParseData(1, "/data/PlayerStats/France/Offensive_1_Goals_And_Shots.csv"),
+            getAndParseData(2, "/data/PlayerStats/France/Offensive_2_Kicks.csv"),
+            getAndParseData(3, "/data/PlayerStats/France/Offensive_3_Goals_And_Expected_Goals.csv"),
+            getAndParseData(4, "/data/PlayerStats/France/Defensive_1_Tackles.csv"),
+            getAndParseData(5, "/data/PlayerStats/France/Defensive_2_Blocks.csv"),
+            getAndParseData(6, "/data/PlayerStats/France/Defensive_3_Challenges.csv"),
+            getAndParseData(7, "/data/PlayerStats/France/Passing_1_Total_Passing.csv"),
+            getAndParseData(8, "/data/PlayerStats/France/Possession_1_Controls.csv"),
+        ]).then((values) => {
+            values.sort((a, b) => a!.order - b!.order);
+            for (const value of values) {
+                _data.push(value!.__data);
+                _columns.push(value!.columns)
+            }
             setSizing();
             build();
         });
