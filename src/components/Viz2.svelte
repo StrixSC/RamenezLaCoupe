@@ -66,6 +66,8 @@
             yScale: yScale,
             xScale1: xScale1,
             svg: svg,
+            width : width,
+            height : height
         };
 
         return params;
@@ -263,6 +265,77 @@
             .style("fill", "url(#diagonalPattern2)");
     }
 
+    function drawPossessionCircle(
+        margin,
+        width,
+        height,
+        svg
+    ) {
+
+        // Diametre du cercle
+        const donutDiameter = 100
+        var donutRadius = donutDiameter / 2
+
+        // Diametre du trou à l'intérieur
+        const donnutInnerHoleRadius = 0.65*donutRadius
+
+        // Dummy Data
+        // Adversaire, France
+        var dummyPossession = [44, 56]
+
+        // Rouge pour adversaire, Bleu pour france
+        var color = d3.scaleOrdinal()
+            .range(['#fc8787', '#81BDFC'])
+
+
+        var pie = d3.pie().sort(null)
+        var arc = d3.arc()
+            .innerRadius(donnutInnerHoleRadius)
+            .outerRadius(donutRadius)
+
+        
+        svg.append('g')
+            .attr('transform', "translate(" + width / 2  + "," + height / 2 + ")")
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .text('Allo')
+
+        var arcs = svg.append('g')
+            .attr('transform', "translate(" + width / 2 + "," + height / 2 + ")")
+            .selectAll('arc')
+            .data(pie(dummyPossession))
+            .enter()
+            .append('g')
+            .attr('class', 'arc')
+
+        arcs.append('path')
+            .attr('fill', function(d, i) {
+                return color(i)
+            })
+            .attr('d', arc)
+
+
+        console.log(pie(dummyPossession))
+
+        var label = d3.arc()
+                .outerRadius(donutRadius)
+                .innerRadius(donnutInnerHoleRadius)
+
+        arcs.append('text')
+            .attr("transform", function(d) {
+                return "translate(" + label.centroid(d) + ")";
+            })
+            .text(function(d) {
+                return d.value
+            })
+            .style("font-size", "12px")
+            .attr('text-anchor', 'middle')
+
+        
+        
+
+    }
+
     onMount(async () => {
         await d3.csv("data/GamesStats/PassingAgainst.csv").then((data) => {
             console.log(data);
@@ -338,6 +411,13 @@
             rdownDashedRect,
             params.svg
         );
+
+        drawPossessionCircle(
+            params.margin,
+            params.width,
+            params.height,
+            params.svg
+        )
     });
 </script>
 
