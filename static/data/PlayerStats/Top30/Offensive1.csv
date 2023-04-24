@@ -1,30 +1,30 @@
-player,squad,Minutes Played,Goals,Assists
+player,squad,Minutes Played / 50,Goals,Assists
 Player,Squad,Min,Goals,Assists
-Lionel Messi,ar Argentina,6.90,7,3
-Kylian Mbappé,fr France,5.98,8,2
-Harry Kane,eng England,4.02,2,3
-Bruno Fernandes,pt Portugal,3.56,2,3
-Ivan Perišić,hr Croatia,6.69,1,3
-Julián Álvarez,ar Argentina,4.64,4,0
-Olivier Giroud,fr France,4.19,4,0
-Álvaro Morata,es Spain,1.85,3,1
-Gonçalo Ramos,pt Portugal,1.52,3,1
-Antoine Griezmann,fr France,5.37,0,3
-Theo Hernández,fr France,5.08,1,2
-Denzel Dumfries,nl Netherlands,4.79,1,2
-Cody Gakpo,nl Netherlands,4.50,3,0
-Robert Lewandowski,pl Poland,3.60,2,1
-João Félix,pt Portugal,3.31,1,2
-Richarlison,br Brazil,3.23,3,0
-Christian Pulisic,us United States,3.15,1,2
-Vinicius Júnior,br Brazil,2.99,1,2
-Bukayo Saka,eng England,2.88,3,0
-Raphaël Guerreiro,pt Portugal,2.79,1,2
-Mehdi Taremi,ir IR Iran,2.70,2,1
-Phil Foden,eng England,2.58,1,2
-Enner Valencia,ec Ecuador,2.55,3,0
-Davy Klaassen,nl Netherlands,1.90,1,2
-Mislav Oršić,hr Croatia,1.62,1,2
-Vincent Aboubakar,cm Cameroon,1.42,2,1
-Marcus Rashford,eng England,1.40,3,0
+Lionel Messi,ar Argentina,690,7,3
+Kylian Mbappé,fr France,598,8,2
+Harry Kane,eng England,402,2,3
+Bruno Fernandes,pt Portugal,356,2,3
+Ivan Perišić,hr Croatia,669,1,3
+Julián Álvarez,ar Argentina,464,4,0
+Olivier Giroud,fr France,419,4,0
+Álvaro Morata,es Spain,185,3,1
+Gonçalo Ramos,pt Portugal,152,3,1
+Antoine Griezmann,fr France,537,0,3
+Theo Hernández,fr France,508,1,2
+Denzel Dumfries,nl Netherlands,479,1,2
+Cody Gakpo,nl Netherlands,450,3,0
+Robert Lewandowski,pl Poland,360,2,1
+João Félix,pt Portugal,331,1,2
+Richarlison,br Brazil,323,3,0
+Christian Pulisic,us United States,315,1,2
+Vinicius Júnior,br Brazil,299,1,2
+Bukayo Saka,eng England,288,3,0
+Raphaël Guerreiro,pt Portugal,279,1,2
+Mehdi Taremi,ir IR Iran,270,2,1
+Phil Foden,eng England,258,1,2
+Enner Valencia,ec Ecuador,255,3,0
+Davy Klaassen,nl Netherlands,190,1,2
+Mislav Oršić,hr Croatia,162,1,2
+Vincent Aboubakar,cm Cameroon,142,2,1
+Marcus Rashford,eng England,140,3,0
 Niclas Füllkrug,de Germany,0.69,2,1

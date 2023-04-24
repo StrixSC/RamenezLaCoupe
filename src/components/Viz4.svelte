@@ -4,9 +4,10 @@
   import type { PlayerData } from "src/models/player-data";
   import { onMount } from 'svelte'
   import {
-        getRegroupPlayers,
-        getBaselineValues,
-        transformData,
+    Stats,
+    getFranceValues,
+    getBaselineValues,
+    transformData,
   } from "../utils/viz4-helpers";
 
 
@@ -18,14 +19,14 @@
   let _data: PlayerData[][] = []
 
   var chartAxis =
-      [{axis:"Minutes Played"},
-      {axis:"SoT"},
-      {axis:"Shots"},
-      {axis:"Touches"},
-      {axis:"Passes"},
-      {axis:"Tackles"},
-      {axis:"Blocks"},
-      {axis:"Interceptions"}]; 
+      [{axis: Stats.Minutes},
+      {axis:Stats.Shots},
+      {axis:Stats.SoT},
+      {axis:Stats.Touches},
+      {axis:Stats.Passes},
+      {axis:Stats.Tackles},
+      {axis:Stats.Blocks},
+      {axis:Stats.Interceptions}]; 
 
   var dotColors: any = []
 
@@ -84,7 +85,7 @@
               })
               .catch((e) => {
                   console.error(e);
-                  data.push([]);
+                  _data.push([]);
               });
   }
   
@@ -107,7 +108,7 @@
       }
       return false
     });
-    _data = getRegroupPlayers(_franceData)
+    _data =  getFranceValues(_franceData)
   
   }
 
@@ -121,8 +122,7 @@
       }
       return false
     });
-  
-    _baselineData = getBaselineValues(_baselineData)
+    _baselineData = getBaselineValues(_baselineData, "Baseline")
     _data.push(_baselineData)
   }
 
