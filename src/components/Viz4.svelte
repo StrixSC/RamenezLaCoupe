@@ -1,25 +1,31 @@
 <script lang="ts">
   
   import * as d3 from "d3";
-  import type { PlayerData } from "src/models/france-player-data";
+  import type { PlayerData } from "src/models/player-data";
   import { onMount } from 'svelte'
+  import {
+        getRegroupPlayers,
+        getBaselineValues,
+        transformData,
+  } from "../utils/viz4-helpers";
 
-  let _data: PlayerData[][] = [];
-  let current: PlayerData[] = [];
+
+  let _baselineData: PlayerData[] = [];
+  let _franceData: PlayerData[] = [];
+  let _franceDatas: PlayerData[][] = [];
+  let _otherDatas: PlayerData[][] = []
   
-  var data: any = []
-
-  var players = ["Giroux", "Mbappe", "Griezmann", "Baseline"]
+  let _data: PlayerData[][] = []
 
   var chartAxis =
-      [{axis:"Shots"},
+      [{axis:"Minutes Played"},
       {axis:"SoT"},
-      {axis:"Passes"},
+      {axis:"Shots"},
       {axis:"Touches"},
-      {axis:"Dribbles"},
+      {axis:"Passes"},
+      {axis:"Tackles"},
       {axis:"Blocks"},
-      {axis:"Interceptions"},
-      {axis:"Tackle"}]; 
+      {axis:"Interceptions"}]; 
 
   var dotColors: any = []
 
@@ -41,9 +47,9 @@
         "#334e69",
         "#d0af76",
         "#f64999",
-        // "#54d8f8",
-        // "#69cccf",
-        // "#70ff6b",
+        "#54d8f8",
+        "#69cccf",
+        "#70ff6b",
     ]), 
   };
 
@@ -51,33 +57,76 @@
   //////////////////////// Set-Up ////////////////////////////// 
   ////////////////////////////////////////////////////////////// 
   onMount(async () => {
-    Promise.all([
 
-        ]).then(() => {
-            current = _data[0];
+        Promise.all([
+            getAndParseData(1, "/data/PlayerStats/Top30/Offensive1.csv"),
+            getAndParseData(2, "/data/PlayerStats/Top30/Offensive2.csv"),
+            getAndParseData(3, "/data/PlayerStats/Top30/Possession.csv"),
+            getAndParseData(4, "/data/PlayerStats/Top30/Passing.csv"),
+            getAndParseData(5, "/data/PlayerStats/Top30/Defensive.csv"),
+        ]).then((values) => {
+            values.sort((a, b) => a!.order - b!.order);
+            for (const value of values) {
+                setupPlayers(value!.__data)
+            }
+            setupFrancePlayers()
+            setupBaseline()
+            setupRadarChart(_data);
+            buildLegend(_data);
         });
+  })
 
-    // Temporary randomize values
-    let index = 0;
-    for(var name of players) {
-      var stats: any = []
-      for(var stat of chartAxis) {
-        stats.push(
-          {id: index, axis: stat.axis, value: Math.floor(Math. random()*50), name: name}
-        )
-      } 
-      data.push(
-          stats
-        )
-      index++
-    }
+  const getAndParseData = (order: number, src: string) => {
+      return d3.csv(src)
+              .then((data) => {
+                  const [columns, __data] = transformData(data);
+                  return {order, columns, __data};
+              })
+              .catch((e) => {
+                  console.error(e);
+                  data.push([]);
+              });
+  }
+  
+  function setupPlayers(data: PlayerData []) {
+    _franceDatas.push(data.filter(function(item) {
+      return item.country === "France" 
+    }))
 
-    SetupRadarChart();
-    buildLegend();
+    _otherDatas.push(data.filter(function(item) {
+      return item.country !== "France" 
+    }))
+  }
 
-  })		
+  function setupFrancePlayers() {
+    _franceData = _franceDatas.flat(1) // merge arrays
+    _franceData = _franceData.filter((v,i,a)=>a.findIndex(v2=>(v2.axis===v.axis && v2.name===v.name))===i) // remove duplicates
+    _franceData = _franceData.filter(function( obj ) { // remove unwanted data
+      for(const axis of chartAxis) {
+        if(axis.axis == obj.axis) return true
+      }
+      return false
+    });
+    _data = getRegroupPlayers(_franceData)
+  
+  }
 
-  function SetupRadarChart() {
+
+  function setupBaseline() {
+    _baselineData = _otherDatas.flat(1) // merge arrays
+    _baselineData = _baselineData.filter((v,i,a)=>a.findIndex(v2=>(v2.axis===v.axis && v2.name===v.name))===i) // remove duplicates
+    _baselineData = _baselineData.filter(function( obj ) { // remove unwanted data
+      for(const axis of chartAxis) {
+        if(axis.axis == obj.axis) return true
+      }
+      return false
+    });
+  
+    _baselineData = getBaselineValues(_baselineData)
+    _data.push(_baselineData)
+  }
+
+  function setupRadarChart(data: any) {
     var margin = {top: 100, right: 100, bottom: 100, left: 100},
       width = Math.min(cfg.w, window.innerWidth - 10) - margin.left - margin.right,
       height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20); 
@@ -102,8 +151,8 @@
         if ("undefined" !== typeof options[i]) {
           cfg[i] = options[i];
         }
-      } //for i
-    } //if
+      }
+    }
 
     //If the supplied maxValue is smaller than the actual one, replace by the max in the data
     var maxValue: number = Math.max(
@@ -396,7 +445,7 @@
     var tooltip = g.append("text").attr("class", "tooltip").style("opacity", 0);
   } //RadarChart
 
-  function buildLegend() {
+  function buildLegend(data: any) {
     // select the svg area
     var svg = d3.select("#radarLegend-viz4")
       .data(data)
