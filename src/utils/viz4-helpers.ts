@@ -101,7 +101,9 @@ const normalizeValue = (playerData: PlayerData) => {
             break;
         case Stats.Tackles:
             break;
-        case Stats.Tackles:
+        case Stats.Blocks:
+            break;
+        case Stats.Interceptions:
             break;
     }
     return normalizedPlayerData;

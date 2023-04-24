@@ -450,8 +450,9 @@
     var svg = d3.select("#radarLegend-viz4")
       .data(data)
       .append("svg")
-      .attr("width", 275)
-      .attr("height", 350)
+      .attr("class", "radarDotsWrapper")
+      .attr("width", 210)
+      .attr("height", 300)
 
     // Add one dot in the legend for each name.
     svg.selectAll("mydots")
@@ -482,7 +483,7 @@
           return cfg.color(i);
         })
         .style("font-weight", 900)
-        .style("fill-opacity", 0.5)
+        .style("fill-opacity", 0.2)
         .text(function(d: any){ return d[0].name})
         .attr("text-anchor", "left")
         .style("alignment-baseline", "middle")
@@ -512,22 +513,39 @@
 
 <div class="viz4-information-container">
   <h1>Visualization of Top Player Performances: Comparing France's Best Players to Opposing Teams' Best Player</h1>
-  <br /><br />
   <p>
-    Lorem deserunt qui deserunt anim et do ipsum est dolor aute voluptate. Cillum nisi nisi minim laboris occaecat elit ipsum. Reprehenderit cupidatat nisi est dolor consequat aute exercitation occaecat. Reprehenderit labore nostrud laboris labore culpa. Consequat proident anim nisi excepteur officia fugiat ea officia magna officia adipisicing reprehenderit ullamco.
+    <br /><br />
+    In order for a national football team like France to succeed, it is important that they function as a cohesive unit and work together towards a common goal. 
+    However, there are often only a few players who directly impact the overall performance of the team. Our graph highlights the top players from France and compares them to the top players from other national teams. We have selected two of the best offensive players and two of the best defensive players from France based on their goals and assists in the 2022 World Cup Tournament. 
+    These four players are then compared to the average performance of the top 20 players from other national teams, represented by the Baseline.
+    <br /><br />
+    The radial line graph allows users to view various statistics. 
+    Each axis represents a specific statistic, and we evaluate performance using metrics such as minutes played, shots, shots on target, touches, passes, tackles, blocks, and interceptions. Each player is represented by a colored line, and hovering over a player's name makes their corresponding line bold while the other lines remain transparent but visible for player comparisons. 
+    Additionally, individual data points can be hovered over to reveal their corresponding values.
   </p>
+  
 </div>
 <div class="radarContainer-viz4">
+  <div class="radarChart-viz4"></div>
   <div id="radarLegend-viz4">   
   </div>
-  <div class="radarChart-viz4"></div>
+</div>
+<div class="viz4-information-container">
+  <p>
+    <br /><br />
+    As shown in the graph, the 4 players from France have outstanding offensive and defensive statistics compared to other players. 
+    Specifically, Mbappe and Giroud have many more shots and shots on target than the average, while Griezmann and Hernandez have many more passes and tackles.
+    Also, their ability to reach the finals despite having fewer touches than the baseline is a testament to their skill level.
+  </p>
+  
 </div>
 
 <style>
   .radarContainer-viz4 {
     gap: 1rem;
     display: flex;
-    position: relative;
+    align-items: center;
+    justify-content: center;
   }
 
   .radarChart-viz4 {
@@ -535,8 +553,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 8;
-    position: relative;
     z-index: 0;
     margin-top: 2rem;
   }
@@ -547,22 +563,23 @@
   
   #radarLegend-viz4 {
     display: flex;
-    flex: 1;
+    flex: 0;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    position: absolute;
     z-index: 1;
+    background-color: transparent !important;
   }
-  
+
   .viz4-information-container {
     display: flex;
+    flex: 1;
     justify-content: center;
     flex-direction: column;
-    text-align: center;
-    padding: 0.5em;
+    text-align: justify;
+    padding: 1em;
     padding-bottom: 1rem;
-    width: 85%;
+    width: 75%;
     margin: auto;
   }
   :global(svg.radar\.radarChart-viz4) {
