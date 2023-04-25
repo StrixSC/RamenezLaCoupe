@@ -167,8 +167,8 @@
             return;
         }
 
-        const groups = getDataGroups(_data[currentStep]);
-        const subgroups = getDataSubgroups(_data[currentStep]);
+        const groups = getDataGroups(_data[currentStep]).reverse();
+        const subgroups = getDataSubgroups(_data[currentStep]).reverse();
         const colorScale = d3.scaleOrdinal().range(colors).domain(subgroups);
 
         const xScale = d3
@@ -177,7 +177,7 @@
             .domain([0, getLargestValue(_data[currentStep])]);
         const yScale = d3
             .scaleBand()
-            .rangeRound([0, graphSize.height])
+            .rangeRound([graphSize.height, 0])
             .padding(X_PADDING)
             .domain(groups);
         const ySubgroupsScale = d3
@@ -256,7 +256,7 @@
             var size = 20;
 
             svg.selectAll("dots-viz3")
-                .data(() => subgroups)
+                .data(() => subgroups.reverse())
                 .enter()
                 .append("rect")
                 .attr("class", (d: string) => `viz3-${i}-subgroup-${d}`)
@@ -267,7 +267,7 @@
                 .style("fill", (d: string) => colorScale(d) as string);
 
             svg.selectAll("labels-viz3")
-                .data(_columns[i])
+                .data(_columns[i].reverse())
                 .enter()
                 .append("text")
                 .attr("x", size * 1.2)
