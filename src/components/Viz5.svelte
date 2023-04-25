@@ -5,14 +5,14 @@
     const datafile = "/data/OverallStats/TeamOverallStats.csv";
 
     const margins = {
-        top: 50,
-        left: 50,
-        right: 30,
-        bottom: 10,
+        top: 100,
+        left: 200,
+        right: 200,
+        bottom: 100,
     };
 
-    const width = 1000 - margins.left - margins.right;
-    const height = 900 - margins.top - margins.bottom;
+    const width = 1600 - margins.left - margins.right;
+    const height = 1600 - margins.top - margins.bottom;
 
     onMount(async () => {
         let svg = d3
@@ -69,7 +69,13 @@
 
             let possessionChart = svg
                 .append("g")
-                .attr("class", "possession-viz5")
+                .attr("class", "possession-viz5");
+            
+            svg.append("g")
+                .call(d3.axisBottom(xScalePoss))
+                .attr("transform", `translate(0, 50)`);
+
+            possessionChart
                 .append("rect")
                 .attr("class", "viz5-possession")
                 .attr("width", 600)
@@ -77,12 +83,19 @@
                 .attr("rx", 5)
                 .attr("fill", "rgb(129, 189, 252)");
 
-            svg.append("g")
-                .call(d3.axisBottom(xScalePoss))
-                .attr("transform", `translate(0, 50)`);
-
+            possessionChart
+                .append("text")
+                .attr("class", `poss-text-title`)
+                .attr("stroke", "black")
+                .attr("font-size", "16px")
+                .attr("font-weight", "lighter")
+                .text("Possessions")
+                .attr("y", -60)
+            
             let assistsChart = svg
                 .append("g")
+            
+            assistsChart
                 .attr("class", "assists-viz5")
                 .append("rect")
                 .attr("class", "viz5-assists")
@@ -92,6 +105,15 @@
                 .attr("y", 200)
                 .attr("fill", "rgb(129, 189, 252)");
 
+            assistsChart
+                .append("text")
+                .attr("class", `poss-text-title`)
+                .attr("stroke", "black")
+                .attr("font-size", "16px")
+                .attr("font-weight", "lighter")
+                .text("Assists")
+                .attr("y", 140)
+
             svg.append("g")
                 .call(d3.axisBottom(xScaleAssists))
                 .attr("transform", `translate(0, 250)`);
@@ -99,6 +121,8 @@
             let yellowCardsChart = svg
                 .append("g")
                 .attr("class", "yellowCrd-viz5")
+            
+            yellowCardsChart
                 .append("rect")
                 .attr("class", "viz5-yellowCrd")
                 .attr("width", 600)
@@ -107,6 +131,15 @@
                 .attr("y", 400)
                 .attr("fill", "rgb(129, 189, 252)");
 
+            yellowCardsChart
+                .append("text")
+                .attr("class", `poss-text-title`)
+                .attr("stroke", "black")
+                .attr("font-size", "16px")
+                .attr("font-weight", "lighter")
+                .text("Yellow Cards")
+                .attr("y", 340)
+
             svg.append("g")
                 .call(d3.axisBottom(xScaleYellowCrd))
                 .attr("transform", `translate(0, 450)`);
@@ -114,6 +147,8 @@
             let ExpGRatioChart = svg
                 .append("g")
                 .attr("class", "gToExG-viz5")
+            
+            ExpGRatioChart
                 .append("rect")
                 .attr("class", "viz5-gToExG")
                 .attr("width", 600)
@@ -121,6 +156,15 @@
                 .attr("rx", 5)
                 .attr("y", 600)
                 .attr("fill", "rgb(129, 189, 252)");
+
+            ExpGRatioChart
+                .append("text")
+                .attr("class", `poss-text-title`)
+                .attr("stroke", "black")
+                .attr("font-size", "16px")
+                .attr("font-weight", "lighter")
+                .text("Goals to Expected Goals Ratio")
+                .attr("y", 540)
 
             svg.append("g")
                 .call(d3.axisBottom(xScaleGExRatio))
@@ -131,14 +175,14 @@
             ///////////////
 
             data.sort((a: any, b: any) => b.Poss - a.Poss);
-            const gSelection = svg
+            const gSelectionPoss = svg
                 .select(".possession-viz5")
                 .selectAll("g")
                 .data(() => data)
                 .enter()
                 .append("g");
 
-            gSelection
+            gSelectionPoss
                 .append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
@@ -190,7 +234,7 @@
                         .text("");
                 });
 
-            gSelection
+            gSelectionPoss
                 .append("line")
                 .attr("class", (d: any) => `${d.team}-poss`)
                 .attr("x1", (d: any) => xScalePoss(d.Poss))
@@ -216,7 +260,7 @@
                     }
                 });
 
-            gSelection
+            gSelectionPoss
                 .append("text")
                 .attr("class", (d: any) => `${d.team}-poss-text`)
                 .attr("x", (d: any) => xScalePoss(d.Poss))
@@ -606,7 +650,7 @@
 <div class="vizContainer">
     <div id="description">
         <h1>
-            France’s performance compared to the other countries in the World
+            France's performance compared to the other countries in the World
             Cup 2022
         </h1>
         <br />
@@ -622,12 +666,7 @@
         non minim cillum aute sit est id Lorem. Dolore do consectetur labore amet
         pariatur anim ex. Veniam culpa culpa adipisicing qui dolor anim est qui ad.
     </div>
-    <div>
-      <div id="possession-title">Possession</div>
-      <div id="assists-title">Assists</div>
-      <div id="yellCrds-title">Yellow Cards</div>
-      <div id="gToExG-title">Goals to Expected Goals Ratio</div>
-    </div>
+
     <div id="viz5" />
 </div>
 
@@ -648,25 +687,5 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
-    }
-
-    #possession-title {
-      transform: translate(14vw, 8vh);
-      max-width: 0px;
-
-    }
-
-    #assists-title {
-      transform: translate(14vw, 33vh);
-      max-width: 0px;
-    }
-
-    #yellCrds-title {
-      transform: translate(14vw, 55vh);
-      max-width: 0px;
-    }
-
-    #gToExG-title {
-      transform: translate(4vw, 78vh);
     }
 </style>
