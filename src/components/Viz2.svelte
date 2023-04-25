@@ -45,7 +45,7 @@
         const adjustH = height - 47;
 
         // this value is a trial and error to make sure y axis is between both x axis
-        const adjustX = margin.left + 625;
+        const adjustX = margin.left + 635;
 
         // to move both x axis to the right increase translate's first parameter
         // second parameter of translate is for height of axis
@@ -277,7 +277,7 @@
         var donutRadius = donutDiameter / 2
 
         // Diametre du trou à l'intérieur
-        const donnutInnerHoleRadius = 0.65*donutRadius
+        const donnutInnerHoleRadius = 0.65 * donutRadius
 
         // Dummy Data
         // Adversaire, France
@@ -295,13 +295,14 @@
 
         
         svg.append('g')
-            .attr('transform', "translate(" + width / 2  + "," + height / 2 + ")")
+            .attr("width", width + 10 ).attr("height", height + 10)
+            .attr('transform', "translate(" + width/ 0.5 + "," + height / 7 + ")")
             .append('text')
             .attr('text-anchor', 'middle')
             .text('Allo')
 
         var arcs = svg.append('g')
-            .attr('transform', "translate(" + width / 2 + "," + height / 2 + ")")
+            .attr('transform', "translate(" + width  + "," + height / 7  + ")")
             .selectAll('arc')
             .data(pie(dummyPossession))
             .enter()
