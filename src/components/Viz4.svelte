@@ -29,7 +29,7 @@
       {axis:Stats.Interceptions}]; 
 
   var dotColors: any = []
-
+  const colors = ["#fc8787","#44BDFC", "#555555","#0ed56d","#6153A2"]
   var cfg: any = {
     w: 700, //Width of the circle
     h: 700, //Height of the circle
@@ -43,15 +43,7 @@
     opacityCircles: 0.1, //The opacity of the circles of each blob
     strokeWidth: 2, //The width of the stroke around each blob
     roundStrokes: false, //If true the area and stroke will follow a round path (cardinal-closed)
-    color: d3.scaleOrdinal().range([
-        "#74ae59",
-        "#334e69",
-        "#d0af76",
-        "#f64999",
-        "#54d8f8",
-        "#69cccf",
-        "#70ff6b",
-    ]), 
+    color: d3.scaleOrdinal().range(colors), 
   };
 
   ////////////////////////////////////////////////////////////// 

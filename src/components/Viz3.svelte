@@ -1,6 +1,7 @@
 <script lang="ts">
     import * as d3 from "d3";
     import scrollama from "scrollama";
+    import d3Tip from 'd3-tip'
 
     import { onMount } from "svelte";
     import {
@@ -43,18 +44,9 @@
     let currentStep = 0;
     const margins = { top: 40, right: 55, bottom: 50, left: 125 };
 
-    const X_PADDING = 0.1;
+    const X_PADDING = 0.05;
     const SUB_X_PADDING = 0.025;
-
-    const colors = [
-        "#74ae59",
-        "#334e69",
-        "#d0af76",
-        "#f64999",
-        "#54d8f8",
-        "#69cccf",
-        "#70ff6b",
-    ];
+    const colors = ["#fc8787", "#44BDFC", "#555555", "#0ed56d", "#6153A2"];
 
     const getAndParseData = (order: number, src: string) => {
         return d3
@@ -70,6 +62,7 @@
     };
 
     onMount(async () => {
+        
         container = d3.select("#scroll-viz3");
         text = container.select(".scroll__text-viz3");
         step = text.selectAll(".step-viz3");
@@ -168,7 +161,7 @@
             .attr("width", svgSize.width)
             .attr("height", svgSize.height);
     }
-
+    
     function build() {
         if (_data.length <= 0) {
             return;
@@ -249,17 +242,17 @@
             })
             .transition()
             .duration(1000)
-            .attr("width", (d: PlayerData) => xScale(d.value) - xScale(0));
+            .attr("width", (d: PlayerData) => xScale(d.value) - xScale(0))
 
         for (let i = 0; i < _data.length; i++) {
             const subgroups = getDataSubgroups(_data[i]);
-            const colorScale = d3.scaleOrdinal().range(colors).domain(subgroups);
-            const svg = d3
-                .select(`.legend-viz3-${i}`);
+            const colorScale = d3
+                .scaleOrdinal()
+                .range(colors)
+                .domain(subgroups);
+            const svg = d3.select(`.legend-viz3-${i}`);
             svg.selectChildren().remove();
-            svg
-                .attr("width", 600)
-                .attr("height", _columns[i].length * 100);
+            svg.attr("width", 600).attr("height", _columns[i].length * 100);
             var size = 20;
 
             svg.selectAll("dots-viz3")
@@ -296,43 +289,56 @@
                 <h1>Offensive: Goals and Shots</h1>
                 <br />
                 <p>
-                    Eiusmod qui laborum est anim veniam cillum aute duis veniam
-                    magna elit est aliquip. Esse in esse pariatur anim excepteur
-                    eu exercitation do. Reprehenderit ullamco et Lorem velit.
-                    Irure reprehenderit amet non do incididunt. Lorem ex nisi
-                    cupidatat aliquip mollit nulla deserunt magna elit fugiat
-                    esse quis reprehenderit eiusmod. Sit consectetur ad eiusmod
-                    exercitation laboris velit ex nisi irure veniam officia
-                    reprehenderit. Non anim aute cupidatat duis tempor enim
-                    cupidatat.
+                    Goals, Shots on Target, and Shots Taken are key statistics
+                    in analyzing a team's performance in soccer. Goals represent
+                    the number of times a team successfully scores a goal during
+                    a match. Shots on Target indicate the number of shots taken
+                    by a team that are on target and pose a potential threat to
+                    the opponent's goal. Shots Taken represent the total number
+                    of shots attempted by a team during a match, including shots
+                    that missed the target. This helps to provide an overview of
+                    France's offensive performance in the World Cup.
                 </p>
                 <svg class="legend-viz3-0" />
             </div>
             <div class="step-viz3" data-step-viz3="1">
                 <h1>Offensive: Kicks</h1>
+                <br />
                 <p>
-                    Lorem deserunt qui deserunt anim et do ipsum est dolor aute
-                    voluptate. Cillum nisi nisi minim laboris occaecat elit
-                    ipsum. Reprehenderit cupidatat nisi est dolor consequat aute
-                    exercitation occaecat. Reprehenderit labore nostrud laboris
-                    labore culpa. Consequat proident anim nisi excepteur officia
-                    fugiat ea officia magna officia adipisicing reprehenderit
-                    ullamco.
+                    In soccer, kicks are crucial in determining the outcome of a
+                    match. Field Kicks refer to any kick taken during the normal
+                    course of play that is not a penalty kick. <br />Penalty
+                    Kicks, on the other hand, are kicks awarded to a team when
+                    the opposing team commits a foul inside their own penalty
+                    area.
+                    <br />
+                    Penalty Kicks Attempted represent the total number of penalty
+                    kicks taken by a team during a tournament, including those that
+                    were successfully converted into goals and those that were missed.
+                    <br />This allows a comparision of the performance of
+                    France's players in these different types of kicks and
+                    provides an overview of the team's performance in the
+                    offensive kicks category.
                 </p>
                 <svg class="legend-viz3-1" />
             </div>
             <div class="step-viz3" data-step-viz3="2">
-                <h1>Offensive: Goals and Expected Goals</h1>
+                <h1>Offensive: Expected Goals</h1>
                 <br />
                 <p>
-                    Est veniam consectetur elit officia enim culpa qui mollit
-                    veniam eiusmod. Commodo dolor excepteur ipsum in ea anim.
-                    Adipisicing nulla anim non nisi pariatur magna dolor
-                    incididunt ullamco nulla enim aliqua aliquip. Irure fugiat
-                    mollit adipisicing consequat eiusmod. Qui elit laboris dolor
-                    fugiat ipsum consectetur officia veniam. Est reprehenderit
-                    nulla est id enim commodo aliqua ipsum voluptate aliqua
-                    exercitation. Qui dolore sunt sunt sunt do eu elit.
+                    Expected Goals (xG) is a statistical measure used to
+                    quantify the quality of chances created by a team during a
+                    soccer match. The xG value is calculated by analyzing
+                    various factors such as the location of the shot, the angle
+                    of the shot, the type of pass leading to the shot, and the
+                    number of defenders present in the box. A higher xG value
+                    indicates a higher likelihood of a goal being scored from a
+                    particular shot.
+                    <br /><br />
+                    Non-Penalty Expected Goals (npxG) is a subset of xG that excludes
+                    penalty kicks from the calculations. It measures the likelihood
+                    of a goal being scored from open play situations and thus provides
+                    a more accurate assessment of a team's attacking performance.
                 </p>
                 <svg class="legend-viz3-2" />
             </div>
@@ -340,10 +346,21 @@
                 <h1>Defensive: Tackles</h1>
                 <br />
                 <p>
-                    Cillum fugiat laboris Lorem sit anim eu cillum culpa enim
-                    veniam. Culpa officia nisi fugiat duis sit enim. Dolore
-                    aliqua cupidatat do ipsum velit sint aute cillum ut. Amet eu
-                    eiusmod cillum duis excepteur commodo sit ex ea Lorem ea.
+                    Tackles are a key defensive action in soccer that involve a
+                    player dispossessing the opponent of the ball through a
+                    sliding or standing challenge. Tackles won refer to the
+                    percentage of successful tackles made by a player or team,
+                    while tackles in different thirds of the field refer to the
+                    number of tackles made in specific areas of the field.
+                    <br /><br />
+                    Tackles in Defensive 1/3 refer to the number of tackles made
+                    in the defensive third of the field, which is the area closest
+                    to the team's own goal. Tackles in Middle 1/3 refer to the number
+                    of tackles made in the middle third of the field, which is the
+                    central area of the field where the game is often played. Tackles
+                    in Attacking 1/3 refer to the number of tackles made in the attacking
+                    third of the field, which is the area closest to the opponent's
+                    goal.
                 </p>
                 <svg class="legend-viz3-3" />
             </div>
@@ -351,12 +368,24 @@
                 <h1>Defensive: Blocks</h1>
                 <br />
                 <p>
-                    Eu ad dolore eu proident sunt magna non consectetur
-                    excepteur est. Consectetur ea anim anim enim anim ex esse.
-                    Ullamco id reprehenderit eu id culpa ad fugiat officia est.
-                    Tempor proident laboris ipsum ut qui enim excepteur. Eiusmod
-                    ullamco commodo exercitation sit dolore ex sit anim cillum
-                    deserunt. Aliquip tempor nostrud et aliqua quis minim.
+                    Defensive Blocks are a key defensive action in soccer that
+                    involve a player intercepting or blocking an opponent's shot
+                    or pass.
+
+                    <br /><br />
+                    Total Blocks refer to the total number of blocks made by a player
+                    or team, while Shots Blocked and Passes Blocked are subsets of
+                    Total Blocks that refer to the number of shots or passes blocked
+                    respectively.
+                    <br /><br />
+                    Shots Blocked refer to the number of shots blocked by a player
+                    or team during the tournament. This includes any shot that is
+                    either on target or off target.
+                    <br /><br />
+                    Passes Blocked refer to the number of passes blocked by a player
+                    or team during the tournament. This includes any pass that is
+                    intended to go to another player, either on the ground or in
+                    the air.
                 </p>
                 <svg class="legend-viz3-4" />
             </div>
@@ -364,10 +393,27 @@
                 <h1>Defensive: Challenges</h1>
                 <br />
                 <p>
-                    In voluptate mollit adipisicing mollit ex. Esse ullamco
-                    ipsum velit labore non fugiat non aliqua quis eiusmod
-                    consequat. Tempor irure ex occaecat pariatur magna laboris
-                    officia velit.
+                    Defensive Challenges refer to the number of times a player
+                    or team attempts to win the ball back from an opponent who
+                    is dribbling with the ball. The category includes three
+                    subcategories: Number of Dribblers Tackled, Number of
+                    Dribblers Challenged, and Number of Unsuccessful Attempts to
+                    Challenge a Dribbling Player.
+                    <br /><br />
+                    Number of Dribblers Tackled refers to the number of times a player
+                    or team successfully tackles an opponent who is dribbling with
+                    the ball. This means that the player dispossesses the opponent
+                    and gains control of the ball.
+                    <br /><br />
+                    Number of Dribblers Challenged refers to the number of times
+                    a player or team attempts to tackle an opponent who is dribbling
+                    with the ball. This includes both successful and unsuccessful
+                    attempts.
+                    <br /><br />
+                    Number of Unsuccessful Attempts to Challenge a Dribbling Player
+                    refers to the number of times a player or team attempts to tackle
+                    an opponent who is dribbling with the ball but fails to win the
+                    ball back.
                 </p>
                 <svg class="legend-viz3-5" />
             </div>
@@ -375,12 +421,19 @@
                 <h1>Passing</h1>
                 <br />
                 <p>
-                    Eiusmod commodo eu cupidatat nisi ad non proident eiusmod.
-                    Aliqua sunt culpa amet velit minim elit Lorem irure
-                    pariatur. Duis occaecat enim veniam occaecat ad cupidatat
-                    culpa in consequat consectetur aute nulla. Aliquip voluptate
-                    incididunt dolor fugiat. Amet anim aute incididunt id sunt
-                    culpa nostrud in elit exercitation nisi.
+                    Passes are an important aspect of soccer that involve a
+                    player kicking the ball to a teammate in order to maintain
+                    possession of the ball or advance it towards the opposing
+                    team's goal.
+                    <br /><br />
+                    Total Passes Completed refer to the total number of passes successfully
+                    completed by a player or team during the tournament. A pass is
+                    considered completed when the intended teammate successfully
+                    receives the ball.
+                    <br /><br />
+                    Total Passes Attempted refer to the total number of passes attempted
+                    by a player or team during the tournament. This includes both
+                    successful and unsuccessful passes.
                 </p>
                 <svg class="legend-viz3-6" />
             </div>
@@ -388,14 +441,17 @@
                 <h1>Possessions</h1>
                 <br />
                 <p>
-                    Cupidatat irure magna aliqua enim excepteur mollit elit
-                    ullamco officia veniam elit duis minim. Ex ad magna irure id
-                    ullamco aliquip. Cillum non nisi commodo aute et qui amet
-                    ipsum adipisicing tempor amet. Commodo esse id minim aliqua
-                    eiusmod cillum magna veniam eiusmod id in. Fugiat excepteur
-                    ut est Lorem velit voluptate velit deserunt mollit id
-                    incididunt adipisicing officia. Ut et adipisicing aute sint
-                    minim id et.
+                    Possession is a crucial aspect of soccer that involves a
+                    team maintaining control of the ball and preventing the
+                    opposing team from gaining possession.
+                    <br /><br />
+                    Number of Times a Player Touched a Ball includes all instances
+                    where a player comes into contact with the ball, such as passes,
+                    dribbles, and shots.
+                    <br /><br />
+                    Number of Times a Player Controlled the Ball with Their Feet
+                    includes instances where a player receives a pass, dribbles the
+                    ball, or takes a shot.
                 </p>
                 <svg class="legend-viz3-7" />
             </div>
