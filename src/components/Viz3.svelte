@@ -41,6 +41,7 @@
 
     let _data: PlayerData[][] = [];
     let _columns: string[][] = [];
+    let _columnTitleWithKeys: PlayerData[] = [];
     let currentStep = 0;
     const margins = { top: 40, right: 55, bottom: 50, left: 125 };
 
@@ -52,8 +53,8 @@
         return d3
             .csv(src)
             .then((data) => {
-                const [columns, __data] = transformData(data);
-                return { order, columns, __data };
+                const [columns, __data, columnTitlesWithKeys] = transformData(data);
+                return { order, columns, __data, columnTitlesWithKeys };
             })
             .catch((e) => {
                 console.error(e);
@@ -113,6 +114,7 @@
             for (const value of values) {
                 _data.push(value!.__data);
                 _columns.push(value!.columns);
+                _columnTitleWithKeys.push(value!.columnTitlesWithKeys);
             }
             setSizing();
             build();
@@ -167,8 +169,8 @@
             return;
         }
 
-        const groups = getDataGroups(_data[currentStep]).reverse();
-        const subgroups = getDataSubgroups(_data[currentStep]).reverse();
+        const groups = getDataGroups(_data[currentStep])
+        const subgroups = getDataSubgroups(_data[currentStep])
         const colorScale = d3.scaleOrdinal().range(colors).domain(subgroups);
 
         const xScale = d3
@@ -177,7 +179,7 @@
             .domain([0, getLargestValue(_data[currentStep])]);
         const yScale = d3
             .scaleBand()
-            .rangeRound([graphSize.height, 0])
+            .rangeRound([0, graphSize.height])
             .padding(X_PADDING)
             .domain(groups);
         const ySubgroupsScale = d3
@@ -226,15 +228,15 @@
             .attr("y", (d: PlayerData) => ySubgroupsScale(d.subgroup)!)
             .attr("width", xScale(0))
             .attr("height", ySubgroupsScale.bandwidth())
-            .attr("class", "hoverable-element")
+            .attr("class", (d: PlayerData) => ["hoverable-element", `viz3-subgroup-${d.subgroup}`])
             .style("fill", (d: PlayerData) => colorScale(d.subgroup) as string)
             .on("mouseover", function (_, d: PlayerData) {
                 d3.select(this).style(
                     "fill",
                     d3
-                        .color(colorScale(d.subgroup) as string)!
-                        .darker(0.2)
-                        .formatRgb()
+                    .color(colorScale(d.subgroup) as string)!
+                    .darker(0.2)
+                    .formatRgb()
                 );
             })
             .on("mouseout", function (_, d: PlayerData) {
@@ -245,34 +247,34 @@
             .attr("width", (d: PlayerData) => xScale(d.value) - xScale(0))
 
         for (let i = 0; i < _data.length; i++) {
-            const subgroups = getDataSubgroups(_data[i]);
-            const colorScale = d3
+            const adjusedSubgroups = getDataSubgroups(_data[i])
+            const adjustedColorScale = d3
                 .scaleOrdinal()
                 .range(colors)
-                .domain(subgroups);
+                .domain(adjusedSubgroups);
             const svg = d3.select(`.legend-viz3-${i}`);
             svg.selectChildren().remove();
             svg.attr("width", 600).attr("height", _columns[i].length * 100);
             var size = 20;
 
             svg.selectAll("dots-viz3")
-                .data(() => subgroups.reverse())
+                .data(adjusedSubgroups)
                 .enter()
                 .append("rect")
                 .attr("class", (d: string) => `viz3-${i}-subgroup-${d}`)
                 .attr("x", 0)
-                .attr("y", (_, i: number) => 100 + i * (size + 5)) // 100 is where the first dot appears. 25 is the distance between dots
+                .attr("y", (_, j: number) => 100 + j * (size + 5)) // 100 is where the first dot appears. 25 is the distance between dots
                 .attr("width", size)
                 .attr("height", size)
-                .style("fill", (d: string) => colorScale(d) as string);
+                .style("fill", (d: string) => adjustedColorScale(d) as string);
 
             svg.selectAll("labels-viz3")
-                .data(_columns[i].reverse())
+                .data(subgroups)
                 .enter()
                 .append("text")
                 .attr("x", size * 1.2)
-                .attr("y", (_, i: number) => 100 + i * (size + 5) + size / 2) // 100 is where the first dot appears. 25 is the distance between dots
-                .text((d: string) => d)
+                .attr("y", (_, j: number) => 100 + j * (size + 5) + size / 2) // 100 is where the first dot appears. 25 is the distance between dots
+                .text((d: string) => _columnTitleWithKeys[i][d])
                 .attr("text-anchor", "left")
                 .style("alignment-baseline", "middle");
         }
