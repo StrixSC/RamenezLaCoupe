@@ -441,6 +441,14 @@
 <div>
     <h1 class="container-title">Visualisation of some of France’s playstyle and performance against its opponents.</h1>
     <br>
+
+    <p class="viz2-information-container">
+        In these graphs, playstyle of France and their opponents is compared. For each game, we show a rectangle representing each team play style. On the X axis, information on passes are displayed while on the Y axis, information on shots are displayed. 
+        The darker rectangle represents the number of completed actions (shots and passes), while the dashed rectangle represents the total number of aptempted actions (shots and passes). On top of each graph, a donut chart is showwed, representing the possession of each team.
+
+        With this vizualisation, one can understand if a team played an aggressive game (few passes, lot of shots) or a more passive game (lot of passes, few shots). It is also possible to see if a team was more efficient than its opponent (more completed actions) or if it was more wasteful (more attempted actions).
+    </p>
+
     <h2> France(en bleu) vs Australia (rouge) </h2>
     <div id="graph-viz2_1" />
     <h2> France(en bleu) vs Denmark (rouge) </h2>
@@ -473,4 +481,17 @@
     h2{
         text-align: center;
     }
+
+    .viz2-information-container {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        flex-direction: column;
+        text-align: justify;
+        padding: 1em;
+        padding-bottom: 1rem;
+        width: 75%;
+        margin: auto;
+  }
+
 </style>
