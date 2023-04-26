@@ -7,8 +7,8 @@
     const margins = {
         top: 100,
         left: 200,
-        right: 200,
-        bottom: 100,
+        right: 500,
+        bottom: 50,
     };
 
     const width = 1600 - margins.left - margins.right;
@@ -653,18 +653,18 @@
             France's performance compared to the other countries in the World
             Cup 2022
         </h1>
-        <br />
-        Eiusmod ex duis anim irure. Enim officia in non minim mollit duis consequat.
-        Cillum id culpa eu do magna. Lorem cillum sunt eiusmod amet consequat. Pariatur
-        labore dolore nostrud excepteur ea proident enim duis eiusmod commodo eu
-        mollit. Aliquip incididunt aliqua excepteur commodo ullamco enim nostrud
-        consectetur enim duis commodo eu.
+        This visualization has per goal to display the performance of the France national
+        team in comparison with the other participating teams. The graphs shown above will
+        be replicated for a number of team stats (e.g., goals,  yellow cards, red cards, etc.).
         <br /><br />
-        Non adipisicing laboris amet esse cillum. Ad nisi sint commodo enim sint
-        adipisicing ipsum. Qui nulla exercitation dolor incididunt minim. Laborum
-        eiusmod cillum non elit magna officia duis irure cupidatat sint enim. Enim
-        non minim cillum aute sit est id Lorem. Dolore do consectetur labore amet
-        pariatur anim ex. Veniam culpa culpa adipisicing qui dolor anim est qui ad.
+        The x-axis will contain all the teams in the order of their stats. The light blue color
+        represents the interval of values bigger than France. As for the dark blue color, it
+        represents the interval of values lower than France.
+        <br /><br />
+        To complement the visualization,
+        a percentage of how they compare with the France national team. The range of graphs 
+        will be delimited by the teams with the lowest and highest stat for each category.
+        <br /><br />
     </div>
 
     <div id="viz5" />
@@ -674,18 +674,24 @@
     .vizContainer {
         display: flex;
         padding: 2rem;
-        gap: 1rem;
     }
 
     #viz5 {
         flex: 3;
         display: flex;
+        list-style-type:none;
+        padding: 0px;
+        margin: 0px;
+        justify-content:flex-end;
     }
 
     #description {
-        flex: 2;
+        flex: 1;
         display: flex;
         flex-direction: column;
+        min-width: 20vw;
+        margin: 0;
+        padding: 0;
         gap: 1rem;
     }
 </style>
