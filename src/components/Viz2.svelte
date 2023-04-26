@@ -1,67 +1,88 @@
 <script lang="ts">
     import * as d3 from "d3";
     import { onMount } from "svelte";
+    import {
+        calculatePossAgainstFrance
+    } from '../utils/viz2-helpers'
 
-    function drawAxis() {
+    let posForFrance : number[] = []
+    let posAgainstFrance : number[] = []
+
+
+    function drawAxis(minX, maxX, minY, maxY,i,circleRadius = 50) {
         // espace en haut jusqu'a la ligne en haut du rectangle
         // espace a droite jusqu'a la ligne a droite du rectangle
         // espace en bas jusqu'au bas du rectangle
         // espace a gauche jusqu'a gauche du rectangle
-        const margin = { top: 100, right: 70, bottom: 50, left: 265 };
-        const width = 900 - margin.left - margin.right;
-        const height = 500 - margin.top - margin.bottom;
+        const margin = { top: 0, right: 0, bottom: 0, left: 0 };
+        const diffAxisCenter = 40;
+        const marginHor = 10;
+        const marginVer = 100;
 
+        const width = 900;
+        const height = 500;
+        
+        
+        const sizeAxisX = width / 2 - diffAxisCenter - marginHor;
+        
+        
         // create a tag svg/rectangle to contain the graph
         // taille de svg qui contient le graph
-        // width + margin.left + margin.right=900 will only be visible if graph remain inside this border
-        // height + margin.top + margin.bottom=500
+
+        const topDiv = d3.select("#graph-viz2_" + i.toString());
+        topDiv.style("width", width.toString() + "px");
+        topDiv.style("height", (height+marginVer).toString() + "px");
+        
         const svg = d3
-            .select("#graph-viz2")
+            .select("#graph-viz2_" + i.toString())
             .append("svg")
-            .attr("width", width + margin.left + margin.right + 300)
-            .attr("height", height + margin.top + margin.bottom);
+            .attr("width", width.toString() + "px")
+            .attr("height", (height + marginVer).toString() + "px");
 
         const xScale1 = d3
             .scaleLinear()
-            .domain([0, 24])
-            .range([margin.left, width - margin.right]);
+            .domain([minX, maxX])
+            .range([0, sizeAxisX]);
 
         const xScale2 = d3
             .scaleLinear()
-            .domain([24, 0])
-            .range([margin.left, width - margin.right]);
+            .domain([maxX, minX])
+            .range([0, sizeAxisX]);
 
         const yScale = d3
             .scaleLinear()
-            .domain([800, 0])
-            .range([margin.top, height - margin.bottom]);
+            .domain([maxY, minY])
+            .range([0, height - (circleRadius*2)]);
 
         // define an x axis in the graph
-        const xAxis1 = d3.axisBottom(xScale1).tickValues(d3.range(0, 25, 4))
-        const xAxis2 = d3.axisBottom(xScale2).tickValues(d3.range(24, -1, -4));
-        const yAxis = d3.axisLeft(yScale).tickValues(d3.range(0, 900, 200));
+        const xAxis1 = d3.axisBottom(xScale1).tickValues(d3.range(minX, maxX, 4))
+        const xAxis2 = d3.axisBottom(xScale2).tickValues(d3.range(maxX, minX, -4));
+        const yAxis = d3.axisLeft(yScale).tickValues(d3.range(minY, maxY + marginVer, 200));
         svg.selectAll('tick').select('text').attr('class', 'viz2-ticks');
-        // adjust x axises to the bottom make sure it is glued with x axis
-        const adjustH = height - 47;
 
         // this value is a trial and error to make sure y axis is between both x axis
-        const adjustX = margin.left + 635;
 
         // to move both x axis to the right increase translate's first parameter
         // second parameter of translate is for height of axis
+        const ajustV = 30;
         svg.append("g")
-            .attr("transform", "translate(650," + adjustH + ")")
+            .attr("transform", "translate(" + (marginHor) + "," + (height + ajustV) + ")")
             .call(xAxis1)
 
         svg.append("g")
-            .attr("transform", "translate(360," + adjustH + ")")
+            .attr("transform", "translate(" + (sizeAxisX + 2*diffAxisCenter + marginHor) + "," + (height + ajustV) + ")")
             .call(xAxis2)
 
         svg.append("g")
-            .attr("transform", "translate(" + adjustX + ",0)")
+            .attr("transform", "translate(" + (sizeAxisX + diffAxisCenter + marginHor) + ", " + (circleRadius*2 + ajustV) +")")
             .call(yAxis);
 
         const params = {
+            diffAxisCenter : diffAxisCenter,
+            marginHor : marginHor,
+            marginVer : marginVer,
+            ajustV : ajustV,
+            
             margin: margin,
             yScale: yScale,
             xScale1: xScale1,
@@ -73,17 +94,15 @@
         return params;
     }
 
-    function drawLeftRectangle(margin, yScale, xScale1, rectangle, svg) {
-        const rectX = margin.left + 590; // position a partir de la gauche du rectangle
-        const rectY = yScale(rectangle.y);
+    function drawLeftRectangle(params, rectangle) { // (params, yScale, xScale1, rectangle, svg) {
+        const rectWidth = params.xScale1(rectangle.x) - params.xScale1(0);
+        const rectHeight = params.yScale(0) - params.yScale(rectangle.y);
 
-        const rectWidth = xScale1(rectangle.x) - xScale1(0);
-        const rectHeight = yScale(0) - yScale(rectangle.y);
+        const rectX = params.width/2 - params.diffAxisCenter - rectWidth; // position a partir de la gauche du rectangle
+        const rectY = params.height + params.ajustV - rectHeight;
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
-            .attr("x", rectX)
-            .attr("y", rectY)
+        params.svg.append("rect")
             .attr("width", rectWidth)
             .attr("height", rectHeight)
             .style("fill", "blue")
@@ -92,31 +111,30 @@
             .style("stroke-width", 2)
             .attr(
                 "transform",
-                `translate(${rectX}, ${
-                    rectY + rectHeight / 2
-                }) scale(-1, 1) translate(${-rectX}, ${-(
-                    rectY +
-                    rectHeight / 2
-                )})`
+                `translate(${rectX}, ${rectY})`
             );
     }
 
     function drawLeftDashedRectangle(
-        margin,
-        yScale,
-        xScale1,
+        params,
         topRect,
-        downRect,
-        svg
+        downRect
     ) {
-        const topRectX = margin.left + 590; // position a partir de la gauche du rectangle
-        const topRectY = yScale(topRect.y);
 
-        const topRectWidth = xScale1(topRect.x) - xScale1(0);
-        const topRectHeight = yScale(0) - yScale(topRect.y);
+        // margin,
+        // yScale,
+        // xScale1,
+        // topRect,
+        // downRect,
+        // svg
+        const topRectWidth = params.xScale1(topRect.x) - params.xScale1(0);
+        const topRectHeight = params.yScale(0) - params.yScale(topRect.y);
+
+        const topRectX = params.width/2 - params.diffAxisCenter - topRectWidth; // position a partir de la gauche du rectangle
+        const topRectY = params.height + params.ajustV - topRectHeight;
 
          // create the diagonal pattern
-         const pattern = svg.append("defs")
+         const pattern = params.svg.append("defs")
         .append("pattern")
         .attr("id", "diagonalPattern")
         .attr("patternUnits", "userSpaceOnUse")
@@ -134,9 +152,7 @@
         .attr("stroke-width", 3);
         
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
-            .attr("x", topRectX)
-            .attr("y", topRectY)
+        params.svg.append("rect")
             .attr("width", topRectWidth)
             .attr("height", topRectHeight)
             .style("fill", "blue")
@@ -145,24 +161,18 @@
             .style("stroke-width", 2)
             .attr(
                 "transform",
-                `translate(${topRectX}, ${
-                    topRectY + topRectHeight / 2
-                }) scale(-1, 1) translate(${-topRectX}, ${-(
-                    topRectY +
-                    topRectHeight / 2
-                )})`
+                `translate(${topRectX}, ${topRectY})`
             )
             .style("fill", "url(#diagonalPattern)");
 
-        const downRectY = yScale(downRect.y);
+        const downRectWidth = params.xScale1(downRect.x) - params.xScale1(0);
+        const downRectHeight = params.yScale(0) - params.yScale(downRect.y);
 
-        const downRectWidth = xScale1(downRect.x) - xScale1(0);
-        const downRectHeight = yScale(0) - yScale(downRect.y);
+        const downRectX = params.width/2 - params.diffAxisCenter - downRectWidth; // position a partir de la gauche du rectangle
+        const downRectY = params.height + params.ajustV - downRectHeight;
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
-            .attr("x", topRectX)
-            .attr("y", downRectY)
+        params.svg.append("rect")
             .attr("width", downRectWidth)
             .attr("height", downRectHeight)
             .style("fill", "red")
@@ -171,53 +181,47 @@
             .style("stroke-width", 2)
             .attr(
                 "transform",
-                `translate(${topRectX}, ${
-                    downRectY + downRectHeight / 2
-                }) scale(-1, 1) translate(${-topRectX}, ${-(
-                    downRectY +
-                    downRectHeight / 2
-                )})`
+                `translate(${downRectX}, ${downRectY})`
             )
             .style("fill", "url(#diagonalPattern)");
 
     }
 
-    function drawRightRectangle(margin, yScale, xScale1, rectangle, svg) {
-        const rectX = margin.left + 650; // position a partir de la gauche du rectangle
-        const rectY = yScale(rectangle.y);
+    function drawRightRectangle(params, rectangle) {
 
-        const rectWidth = xScale1(rectangle.x) - xScale1(0);
-        const rectHeight = yScale(0) - yScale(rectangle.y);
+        const rectWidth = params.xScale1(rectangle.x) - params.xScale1(0);
+        const rectHeight = params.yScale(0) - params.yScale(rectangle.y);
+
+        const rectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
+        const rectY = params.height + params.ajustV - rectHeight;
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
-            .attr("x", rectX)
-            .attr("y", rectY)
+        params.svg.append("rect")
             .attr("width", rectWidth)
             .attr("height", rectHeight)
             .style("fill", "red")
             .style("opacity", 0.3)
             .style("stroke", "black")
-            .style("stroke-width", 2);
+            .style("stroke-width", 2)
+            .attr(
+                "transform",
+                `translate(${rectX}, ${rectY})`
+            );
     }
 
     function drawRightDashedRectangle(
-        margin,
-        yScale,
-        xScale1,
+        params,
         topRect,
-        downRect,
-        svg
+        downRect
     ) {
-        const topRectX = margin.left + 650; // position a partir de la gauche du rectangle
-        const topRectY = yScale(topRect.y);
+        const topRectWidth = params.xScale1(topRect.x) - params.xScale1(0);
+        const topRectHeight = params.yScale(0) - params.yScale(topRect.y);
 
-        const topRectWidth = xScale1(topRect.x) - xScale1(0);
-        const topRectHeight = yScale(0) - yScale(topRect.y);
-
-
+        const topRectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
+        const topRectY = params.height + params.ajustV - topRectHeight;
+    
         // create the diagonal pattern
-        const pattern = svg.append("defs")
+        const pattern = params.svg.append("defs")
         .append("pattern")
         .attr("id", "diagonalPattern2")
         .attr("patternUnits", "userSpaceOnUse")
@@ -236,7 +240,7 @@
 
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
+        params.svg.append("rect")
             .attr("x", topRectX)
             .attr("y", topRectY)
             .attr("width", topRectWidth)
@@ -245,43 +249,43 @@
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
-            .style("fill", "url(#diagonalPattern2)");
+            .style("fill", "url(#diagonalPattern2)");;
 
-        const downRectY = yScale(downRect.y);
+        const downRectWidth = params.xScale1(downRect.x) - params.xScale1(0);
+        const downRectHeight = params.yScale(0) - params.yScale(downRect.y);
 
-        const downRectWidth = xScale1(downRect.x) - xScale1(0);
-        const downRectHeight = yScale(0) - yScale(downRect.y);
+        const downRectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
+        const downRectY = params.height + params.ajustV - downRectHeight;
 
         // add the rectangle to the graph and flip it 180 degree around the y axis
-        svg.append("rect")
-            .attr("x", topRectX)
-            .attr("y", downRectY)
+        params.svg.append("rect")
             .attr("width", downRectWidth)
             .attr("height", downRectHeight)
             .style("fill", "red")
             .style("opacity", 0.3)
             .style("stroke", "black")
             .style("stroke-width", 2)
-            .style("fill", "url(#diagonalPattern2)");
+            .style("fill", "url(#diagonalPattern2)")
+            .attr(
+                "transform",
+                `translate(${downRectX}, ${downRectY})`
+            );
     }
 
     function drawPossessionCircle(
-        margin,
+        donutDiameter,
         width,
         height,
-        svg
+        svg,
+        countryName,
+        i
     ) {
 
         // Diametre du cercle
-        const donutDiameter = 100
         var donutRadius = donutDiameter / 2
 
         // Diametre du trou à l'intérieur
         const donnutInnerHoleRadius = 0.65 * donutRadius
-
-        // Dummy Data
-        // Adversaire, France
-        var dummyPossession = [44, 56]
 
         // Rouge pour adversaire, Bleu pour france
         var color = d3.scaleOrdinal()
@@ -296,15 +300,16 @@
         
         svg.append('g')
             .attr("width", width + 10 ).attr("height", height + 10)
-            .attr('transform', "translate(" + width/ 0.5 + "," + height / 7 + ")")
+            .attr('transform', "translate(" + width/ 2 + "," + (donutRadius+7) + ")")
             .append('text')
             .attr('text-anchor', 'middle')
-            .text('Allo')
+            .text(countryName)
+            .attr('font-size', '5px')
 
         var arcs = svg.append('g')
-            .attr('transform', "translate(" + width  + "," + height / 7  + ")")
+            .attr('transform', "translate(" + width/2  + "," + donutDiameter/2  + ")")
             .selectAll('arc')
-            .data(pie(dummyPossession))
+            .data(pie([posAgainstFrance[i],posForFrance[i]]))
             .enter()
             .append('g')
             .attr('class', 'arc')
@@ -315,13 +320,11 @@
             })
             .attr('d', arc)
 
-
-        console.log(pie(dummyPossession))
-
         var label = d3.arc()
                 .outerRadius(donutRadius)
                 .innerRadius(donnutInnerHoleRadius)
 
+        // labels inside donut
         arcs.append('text')
             .attr("transform", function(d) {
                 return "translate(" + label.centroid(d) + ")";
@@ -332,15 +335,32 @@
             .style("font-size", "12px")
             .attr('text-anchor', 'middle')
 
-        
-        
-
     }
 
     onMount(async () => {
         await d3.csv("data/GamesStats/PassingAgainst.csv").then((data) => {
             console.log(data);
         });
+
+        await d3.csv("data/GamesStats/PossesionFor.csv").then((data2) => {
+            // Le tableau contient les valeurs possession pour lequique france vs 
+            // 0 : argentine, 1 : denemark, 2: tunisie, 3: poland, 4: england, 5 : maroc, 6 : argentine
+            // against france it would be 100 - possForFrance[]
+            
+            const rawData = data2.map(row => row['For France']); 
+            const temp = rawData.filter(item => item?.trim());
+            const filteredTemp = temp.filter(item => item !== undefined);
+            const posFrance = (filteredTemp as string[]);
+            posFrance.shift();
+            posFrance.pop();
+
+            posForFrance = posFrance.map(str => Number(str))
+
+            posAgainstFrance = calculatePossAgainstFrance(posForFrance) // calculated the pos against 
+           console.log('possesion',posForFrance)
+            
+        });
+
         console.log("START");
         // for france
         let franceCMP = [678, 455, 573, 501, 325, 309, 436]; // pass completed
@@ -354,82 +374,102 @@
         let againstFranceSoT = [1, 2, 3, 1, 6, 2, 9];
         let againstFranceSh = [4, 10, 5, 11, 14, 13, 19];
 
-        const params = drawAxis();
-        const leftFullRect = {
-            x: franceSoT[0],
-            y: franceCMP[0],
-        };
-        drawLeftRectangle(
-            params.margin,
-            params.yScale,
-            params.xScale1,
-            leftFullRect,
-            params.svg
-        );
+        let viz = {
+            "minX" : 0,
+            "maxX" : 24,
+            "minY" : 0,
+            "maxY" : 800
+        }
+        const donutDiameter = 100;
 
-        const topDashedRect = {
-            x: franceSoT[0],
-            y: franceAtt[0],
-        };
-        const downDashedRect = {
-            x: franceSh[0],
-            y: franceCMP[0],
-        };
-        drawLeftDashedRectangle(
-            params.margin,
-            params.yScale,
-            params.xScale1,
-            topDashedRect,
-            downDashedRect,
-            params.svg
-        );
+        const countryName = ['Australia','Denmark', 'Tunisia', 'Poland', 'England', 'Morocco', 'Argentina']
 
-        const rightFullRect = {
-            x: againstFranceSoT[0],
-            y: againstFranceCMP[0],
-        };
-        drawRightRectangle(
-            params.margin,
-            params.yScale,
-            params.xScale1,
-            rightFullRect,
-            params.svg
-        );
+        for(let i = 0; i < countryName.length; ++i){
+            const params = drawAxis(viz["minX"], viz["maxX"], viz["minY"], viz["maxY"], i+1);
+            const leftFullRect = {
+                x: franceSoT[i],
+                y: franceCMP[i],
+            };
+            
+            drawLeftRectangle(
+                params,
+                leftFullRect
+            );
 
-        const rtopDashedRect = {
-            x: againstFranceSoT[0],
-            y: againstFranceAtt[0],
-        };
-        const rdownDashedRect = {
-            x: againstFranceSh[0],
-            y: againstFranceCMP[0],
-        };
-        drawRightDashedRectangle(
-            params.margin,
-            params.yScale,
-            params.xScale1,
-            rtopDashedRect,
-            rdownDashedRect,
-            params.svg
-        );
+            const topDashedRect = {
+                x: franceSoT[i],
+                y: franceAtt[i],
+            };
+            const downDashedRect = {
+                x: franceSh[i],
+                y: franceCMP[i],
+            };
+            drawLeftDashedRectangle(
+                params,
+                topDashedRect,
+                downDashedRect
+            );
 
-        drawPossessionCircle(
-            params.margin,
-            params.width,
-            params.height,
-            params.svg
-        )
+            const rightFullRect = {
+                x: againstFranceSoT[i],
+                y: againstFranceCMP[i],
+            };
+            drawRightRectangle(
+                params,
+                rightFullRect
+            );
+
+            const rtopDashedRect = {
+                x: againstFranceSoT[i],
+                y: againstFranceAtt[i],
+            };
+            const rdownDashedRect = {
+                x: againstFranceSh[i],
+                y: againstFranceCMP[i],
+            };
+            drawRightDashedRectangle(
+                params,
+                rtopDashedRect,
+                rdownDashedRect
+            );
+            
+            drawPossessionCircle(
+                donutDiameter,
+                params.width,
+                params.height,
+                params.svg,
+                countryName[i],
+                i
+            )
+        }
+        
     });
 </script>
 
 <div>
     <h1 class="container-title">Visualisation of some of France’s playstyle and performance against its opponents.</h1>
-    <div id="graph-viz2" />
+    <br>
+    <h2> France(en bleu) vs Australia (rouge) </h2>
+    <div id="graph-viz2_1" />
+    <h2> France(en bleu) vs Denmark (rouge) </h2>
+    <div id="graph-viz2_2" />
+    <h2> France(en bleu) vs Tunisia (rouge) </h2>
+    <div id="graph-viz2_3" />
+    <h2> France(en bleu) vs Poland (rouge) </h2>
+    <div id="graph-viz2_4" />
+    <h2> France(en bleu) vs England (rouge) </h2>
+    <div id="graph-viz2_5" />
+    <h2> France(en bleu) vs Morocco (rouge) </h2>
+    <div id="graph-viz2_6" />
+    <h2> France(en bleu) vs Argentina (rouge) </h2>
+    <div id="graph-viz2_7" />
 </div>
 
 <style>
-    #graph-viz2 {
+
+    #graph-viz2_1, #graph-viz2_2, #graph-viz2_3, #graph-viz2_4, #graph-viz2_5, #graph-viz2_6, #graph-viz2_7  {
         font-size: 14px !important;
+        margin : auto;
     }
 
     .container-title {
@@ -437,5 +477,8 @@
     }
     :global(.viz2-ticks) {
         font-size: 14px !important;
+    }
+    h2{
+        text-align: center;
     }
 </style>

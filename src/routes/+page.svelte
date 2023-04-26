@@ -126,7 +126,7 @@
     }
 
     .viz2-container {
-        height: 100vh;
+        height: auto;
     }
 
     .viz3-container {
