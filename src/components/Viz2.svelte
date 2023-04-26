@@ -41,12 +41,12 @@
 
         const xScale1 = d3
             .scaleLinear()
-            .domain([minX, maxX])
+            .domain([maxX, minX])
             .range([0, sizeAxisX]);
 
         const xScale2 = d3
             .scaleLinear()
-            .domain([maxX, minX])
+            .domain([minX, maxX])
             .range([0, sizeAxisX]);
 
         const yScale = d3
@@ -59,8 +59,6 @@
         const xAxis2 = d3.axisBottom(xScale2).tickValues(d3.range(maxX, minX, -4));
         const yAxis = d3.axisLeft(yScale).tickValues(d3.range(minY, maxY + marginVer, 200));
         svg.selectAll('tick').select('text').attr('class', 'viz2-ticks');
-
-        // this value is a trial and error to make sure y axis is between both x axis
 
         // to move both x axis to the right increase translate's first parameter
         // second parameter of translate is for height of axis
@@ -95,7 +93,7 @@
     }
 
     function drawLeftRectangle(params, rectangle) { // (params, yScale, xScale1, rectangle, svg) {
-        const rectWidth = params.xScale1(rectangle.x) - params.xScale1(0);
+        const rectWidth = Math.abs(params.xScale1(rectangle.x) - params.xScale1(0));
         const rectHeight = params.yScale(0) - params.yScale(rectangle.y);
 
         const rectX = params.width/2 - params.diffAxisCenter - rectWidth; // position a partir de la gauche du rectangle
@@ -121,13 +119,7 @@
         downRect
     ) {
 
-        // margin,
-        // yScale,
-        // xScale1,
-        // topRect,
-        // downRect,
-        // svg
-        const topRectWidth = params.xScale1(topRect.x) - params.xScale1(0);
+        const topRectWidth = Math.abs(params.xScale1(topRect.x) - params.xScale1(0));
         const topRectHeight = params.yScale(0) - params.yScale(topRect.y);
 
         const topRectX = params.width/2 - params.diffAxisCenter - topRectWidth; // position a partir de la gauche du rectangle
@@ -165,7 +157,7 @@
             )
             .style("fill", "url(#diagonalPattern)");
 
-        const downRectWidth = params.xScale1(downRect.x) - params.xScale1(0);
+        const downRectWidth = Math.abs(params.xScale1(downRect.x) - params.xScale1(0));
         const downRectHeight = params.yScale(0) - params.yScale(downRect.y);
 
         const downRectX = params.width/2 - params.diffAxisCenter - downRectWidth; // position a partir de la gauche du rectangle
@@ -189,7 +181,7 @@
 
     function drawRightRectangle(params, rectangle) {
 
-        const rectWidth = params.xScale1(rectangle.x) - params.xScale1(0);
+        const rectWidth = Math.abs(params.xScale1(rectangle.x) - params.xScale1(0));
         const rectHeight = params.yScale(0) - params.yScale(rectangle.y);
 
         const rectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
@@ -214,7 +206,7 @@
         topRect,
         downRect
     ) {
-        const topRectWidth = params.xScale1(topRect.x) - params.xScale1(0);
+        const topRectWidth = Math.abs(params.xScale1(topRect.x) - params.xScale1(0));
         const topRectHeight = params.yScale(0) - params.yScale(topRect.y);
 
         const topRectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
@@ -251,7 +243,7 @@
             .style("stroke-width", 2)
             .style("fill", "url(#diagonalPattern2)");;
 
-        const downRectWidth = params.xScale1(downRect.x) - params.xScale1(0);
+        const downRectWidth = Math.abs(params.xScale1(downRect.x) - params.xScale1(0));
         const downRectHeight = params.yScale(0) - params.yScale(downRect.y);
 
         const downRectX = params.width/2 + params.diffAxisCenter; // position a partir de la gauche du rectangle
