@@ -374,7 +374,7 @@
         }
         const donutDiameter = 100;
 
-        const countryName = ['Australia','Denmark', 'Tunisia', 'Poland', 'England', 'Morocco', 'Argentina']
+        const countryName = ['','', '', '', '', '', '']
 
         for(let i = 0; i < countryName.length; ++i){
             const params = drawAxis(viz["minX"], viz["maxX"], viz["minY"], viz["maxY"], i+1);
